@@ -1,8 +1,8 @@
 ############################################################################
-# apps/examples/cxxtest/Makefile
+# apps/builtin/registry/Makefile
 #
-#   Copyright (C) 2009-2012 Gregory Nutt. All rights reserved.
-#   Author: Gregory Nutt <spudmonkey@racsa.co.cr>
+#   Copyright (C) 2012 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,21 +34,31 @@
 ############################################################################
 
 -include $(TOPDIR)/Make.defs
+include $(APPDIR)/Make.defs
 
-# CXX test program
+# NSH Library
 
-ASRCS =
-CSRCS =
-CXXSRCS = task_heartled.cxx
-MAINSRC = main.cxx
+all:
+.PHONY: context depend clean distclean
+.PRECIOUS: ../../libapps$(LIBEXT)
 
-CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
-PROGNAME = $(CONFIG_XYZ_PROGNAME)
+.updated: $(DEPCONFIG)
+	$(call DELFILE, *.bdat)
+	$(call DELFILE, *.pdat)
+	$(Q) touch .updated
 
-# cxxtest built-in application info
+# This must run before any other context target
 
-APPNAME = SeerDIOBoard
-PRIORITY = SCHED_PRIORITY_DEFAULT
-STACKSIZE = 4096
+install:
 
-include $(APPDIR)/Application.mk
+context: .updated
+
+depend:
+
+clean:
+	$(call CLEAN)
+
+distclean: clean
+	$(call DELFILE, *.bdat)
+	$(call DELFILE, *.pdat)
+	$(call DELFILE, .updated)
