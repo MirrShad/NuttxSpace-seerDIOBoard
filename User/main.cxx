@@ -53,6 +53,8 @@
 
 #include "TasksPriority.h"
 #include "task_heartled.h"
+#include "task_commanddispatch.h"
+#include "udp.h"
 using namespace std;
 
 //***************************************************************************
@@ -74,10 +76,13 @@ extern "C"
 
     /* Call all C++ static constructors */
     up_cxxinitialize(); 
+    
+    //init udp net
+    (void)udp_netinit();
  
     int ret;
     ret = task_create("heart_beat_daemon", CONFIG_HEARTS_LEDS_PRIORITY,
-                    2048, heart_led_task,
+                    2048, task_heartled,
                     NULL);
     if (ret < 0)
     {
@@ -87,6 +92,16 @@ extern "C"
       return EXIT_FAILURE;
     }
 
+    ret = task_create("commanddispatch_daemon", CONFIG_COMMAND_DISPATCH_PRIORITY,
+                    2048, task_commanddispatch,
+                    NULL);
+    if (ret < 0)
+    {
+      int errcode = errno;
+      printf("leds_main: ERROR: Failed to start commanddispatch_daemon: %d\n",
+             errcode);
+      return EXIT_FAILURE;
+    }
     return 0;
   }
 }

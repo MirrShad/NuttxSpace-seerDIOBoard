@@ -16,7 +16,7 @@
 
 extern "C"
 {
-  int heart_led_task(int argc, char *argv[])
+  int task_heartled(int argc, char *argv[])
   {
     int fd = open("/dev/heartled", O_WRONLY);
     if (fd < 0)
@@ -43,12 +43,10 @@ extern "C"
       }while(ulDeltaMS < 500);
       if(bLedOn)
       {
-        printf("heart led on\r\n");
         ret = ioctl(fd, HEARTLEDIOC_SETON, NULL);
       }
       else
       {
-          printf("heart led on\r\n");
           ret = ioctl(fd, HEARTLEDIOC_SETOFF, NULL);
       }
       if (ret < 0)

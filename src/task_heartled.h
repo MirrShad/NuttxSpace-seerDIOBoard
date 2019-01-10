@@ -3,7 +3,7 @@
 
 extern "C"
 {
-  extern int heart_led_task(int argc, char *argv[]);
+  extern int task_heartled(int argc, char *argv[]);
 }
 
 #endif

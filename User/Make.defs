@@ -34,6 +34,5 @@
 #
 ############################################################################
 
-ifeq ($(CONFIG_EXAMPLES_CXXTEST),y)
 CONFIGURED_APPS += User
-endif
+

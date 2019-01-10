@@ -39,8 +39,14 @@
 
 ASRCS =
 CSRCS =
-CXXSRCS = task_heartled.cxx
+CXXSRCS = 
 MAINSRC = main.cxx
+
+CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)src"}
+CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)src"}
+
+CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
+CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
 
 CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
 PROGNAME = $(CONFIG_XYZ_PROGNAME)
