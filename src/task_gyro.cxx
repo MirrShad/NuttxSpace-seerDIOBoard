@@ -48,6 +48,30 @@ extern "C"
     {
       fprintf(stderr, "GYRO ERROR: gyro write failed: %d\n", errno);
     }
+
+    for(;;)
+    {
+      ssize_t n = read(fd, buf, 11520);
+      if (n == 0)
+      {
+        printf("read 0 bytes\r\n");
+      }
+      else if (n < 0)
+      {
+        printf("read failed: %d\n", errno);
+        fflush(stdout);
+      }
+      else
+      {
+        for (i = 0; i < (int)n; i++)
+        {
+          printf("get %d 0x%x \r\n", i, buf[i]);
+        }
+        write(fd,buf,n);
+        fflush(stdout);
+      }    
+    }
+    
 errout_with_buf:
   free(buf);
 
