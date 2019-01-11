@@ -54,6 +54,7 @@
 #include "TasksPriority.h"
 #include "task_heartled.h"
 #include "task_commanddispatch.h"
+#include "task_gyro.h"
 #include "udp.h"
 using namespace std;
 
@@ -80,6 +81,7 @@ extern "C"
     //init udp net
     (void)udp_netinit();
  
+    printf("Init heart beat task\r\n");
     int ret;
     ret = task_create("heart_beat_daemon", CONFIG_HEARTS_LEDS_PRIORITY,
                     2048, task_heartled,
@@ -92,6 +94,7 @@ extern "C"
       return EXIT_FAILURE;
     }
 
+    printf("Init command dispatch task\r\n");
     ret = task_create("commanddispatch_daemon", CONFIG_COMMAND_DISPATCH_PRIORITY,
                     2048, task_commanddispatch,
                     NULL);
@@ -102,6 +105,19 @@ extern "C"
              errcode);
       return EXIT_FAILURE;
     }
+
+    printf("Init gyro task\r\n");
+    ret = task_create("gyro_daemon", CONFIG_GYRO_PRIORITY,
+                    2048, task_gyro,
+                    NULL);
+    if (ret < 0)
+    {
+      int errcode = errno;
+      printf("gyro_main: ERROR: Failed to start gyro_daemon: %d\n",
+             errcode);
+      return EXIT_FAILURE;
+    }
+
     return 0;
   }
 }
