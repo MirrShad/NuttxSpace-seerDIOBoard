@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+enum QUERY_TYPE{
+	FRAME = 0;
+}
+
+message QueryCan {
+	uint32 type = 1;
+	uint32 num = 2;
+}

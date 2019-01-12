@@ -1,0 +1,9 @@
+syntax = "proto3";
+package rbk.protocol;
+message Message_ipconfig {
+	bytes ip = 1;
+	bytes subnet_mask = 2;
+	bytes gateway = 3;
+	bytes mac_addr = 4;
+	bool save_to_flash = 5;
+}

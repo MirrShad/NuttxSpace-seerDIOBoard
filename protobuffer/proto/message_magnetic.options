@@ -1,0 +1,2 @@
+rbk.protocol.Message_Magnetic.magnetic_nodes	max_count:2
+rbk.protocol.Message_MagneticNode.value max_count:16

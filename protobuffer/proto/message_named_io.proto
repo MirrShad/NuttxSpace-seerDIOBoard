@@ -1,0 +1,18 @@
+syntax = "proto3";
+package rbk.protocol;
+import "nanopb.proto";
+import "message_header.proto";
+
+message Message_Named_DI{
+	Message_Header header = 1;
+	string name = 2 [(nanopb).max_size = 50];
+    uint32 num = 3;
+	repeated bool id = 4;
+}
+
+message Message_Named_DO{
+	Message_Header header = 1;
+	string name = 2 [(nanopb).max_size = 50];
+    uint32 num = 3;
+	repeated bool id = 4;
+}

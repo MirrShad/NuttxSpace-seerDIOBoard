@@ -1,0 +1,21 @@
+syntax = "proto3";
+package rbk.protocol;
+import "message_header.proto";
+
+message Message_Ekf_Position {
+	Message_Header header = 1;
+    float x 		= 2;	// m
+    float y 		= 3;	// m
+    float angle 	= 4;	// rad
+	float steer_angle = 5;
+	
+	float vel_x   = 6; // m/s
+	float vel_y   = 7; // m/s
+	float vel_rotate = 8; // rad/s
+	
+	float odom_x = 9;
+	float odom_y = 10;
+	float odom_angle = 11;
+	
+	float imu_yaw = 12;
+}

@@ -1,0 +1,4 @@
+rbk.protocol.Message_ipconfig.ip				max_size:4
+rbk.protocol.Message_ipconfig.subnet_mask	max_size:4
+rbk.protocol.Message_ipconfig.gateway		max_size:4
+rbk.protocol.Message_ipconfig.mac_addr 		max_size:6

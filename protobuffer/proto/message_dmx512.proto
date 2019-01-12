@@ -1,0 +1,11 @@
+syntax = "proto3";
+package rbk.protocol;
+
+message Message_Dmx512 {
+    uint32 type		    = 1;	//类型
+    uint32 battery	    = 2;	//电池电量
+    uint32 color_r     = 3;    //红色阈值
+    uint32 color_g     = 4;    //绿色阈值
+    uint32 color_b     = 5;    //蓝色阈值
+    uint32 color_w     = 6;    //白色阈值
+}

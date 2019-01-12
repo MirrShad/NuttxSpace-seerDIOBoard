@@ -1,0 +1,40 @@
+syntax = "proto3";
+package rbk.protocol;
+message Message_Lift_Elevation{
+    int32 ID                = 1;
+    int32 driverBrand		= 2;
+    bool Inverse		    = 3;
+    bool haveEncoder	    = 4;
+    bool encoderWithMotor   = 5;
+    int32 encoderLines 		= 6;
+    float mmCntRatio        = 7;
+    int32 limitType         = 8;
+    float toplimit          = 9;
+    float bottomlimit       = 10;
+    bool topDIHighTrigger   = 11;
+    bool bottomDIHighTrigger = 12;
+    int32 safeControlType   = 13;
+    int32 timeLimit         = 14;
+    int32 setSpeedPriority  = 15;
+	int32 setToLimitPriority  = 16;
+	int32 heightLimit         = 17;
+}
+
+message Message_Lift_Rotation{
+    int32 ID                = 1;
+    int32 driverBrand		= 2;
+    bool Inverse		    = 3;
+    bool haveEncoder	    = 4;
+    bool encoderWithMotor   = 5;
+	int32 encoderLines		= 6;
+    float degreeRatio       = 7;
+    int32 setSpeedPriority    = 8;
+    int32 spinDegreePriority  = 9;
+    float spinDegreeSpeed     = 10;
+	int32 spinDegreeFollowPriority = 11;
+	bool spinDegreeFollowWithZero = 12;
+	int32 zeroPointDI		= 13;
+    bool DIHighTrigger      = 14;
+	float spinFollowZeroInitSpeed	= 15;
+    bool spinDegreeWithZero  = 16;
+}

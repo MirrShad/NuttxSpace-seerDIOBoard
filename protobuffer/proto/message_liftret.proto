@@ -1,0 +1,8 @@
+syntax = "proto3";
+package rbk.protocol;
+
+message Message_Lift_Ret{
+    int32 retAction                   = 1;
+    bool toLimitFini                = 2;
+    bool spinDegreeFini                = 3;
+}

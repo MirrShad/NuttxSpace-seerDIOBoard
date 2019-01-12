@@ -38,18 +38,15 @@
 # CXX test program
 
 ASRCS =
-CSRCS =
-CXXSRCS = task_heartled.cxx task_commanddispatch.cxx task_gyro.cxx Gyro.cxx
+CSRCS = message_imu.pb.c
+CXXSRCS = 
 MAINSRC = 
-
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
-
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
 
 CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
 PROGNAME = $(CONFIG_XYZ_PROGNAME)
+
+CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
+CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
 
 # cxxtest built-in application info
 

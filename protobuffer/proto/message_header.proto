@@ -1,0 +1,6 @@
+syntax = "proto3";
+package rbk.protocol;
+message Message_Header {
+	uint64 pub_nsec = 1;
+	uint64 data_nsec = 2;
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message BatteryReport {
+	float  current = 1;
+	float  voltage = 2;
+	float  maxTemperature = 3;
+	float  soc = 4;
+}

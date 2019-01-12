@@ -1,0 +1,11 @@
+syntax = "proto3";
+package rbk.protocol;
+
+message Message_Jack {
+	int32 mode = 1;
+	int32 state = 2;
+	bool enable = 3;
+	int32 errorCode = 4;
+	bool isFull = 5;
+	int32 speed_level = 6;
+}

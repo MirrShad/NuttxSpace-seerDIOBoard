@@ -1,4 +1,6 @@
 #include "Gyro.h"
+#include <pb_encode.h>
+#include "message_imu.pb.h"
 
 namespace{
 	// version head
@@ -340,9 +342,11 @@ void CGyroDevice::rstTxPowerOn()
 
 void CGyroDevice::report()
 {
-	float acc_x = -9.8f*ax/16384.0f;
-	float acc_y = 9.8f*ay/16384.0f;
-	float acc_z = 9.8f*az/16384.0f;
-	printf("gyro get Message 2: %f,%f,%f\r\n",acc_x,acc_y,acc_z);
+	rbk_protocol_Message_IMU pbMsg = rbk_protocol_Message_IMU_init_zero;
+	
+	pbMsg.acc_x = -9.8f*ax/16384.0f;
+	pbMsg.acc_y = 9.8f*ay/16384.0f;
+	pbMsg.acc_z = 9.8f*az/16384.0f;
+	printf("gyro get Message 2: %d,%d,%d\r\n",ax,ay,az);
 }
 
