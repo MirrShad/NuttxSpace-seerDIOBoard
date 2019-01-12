@@ -340,6 +340,9 @@ void CGyroDevice::rstTxPowerOn()
 
 void CGyroDevice::report()
 {
-	printf("gyro get Message: %f,%f,%f\r\n",ax,ay,az);
+	float acc_x = -9.8f*ax/16384.0f;
+	float acc_y = 9.8f*ay/16384.0f;
+	float acc_z = 9.8f*az/16384.0f;
+	printf("gyro get Message 2: %f,%f,%f\r\n",acc_x,acc_y,acc_z);
 }
 

@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "Gyro.h"
 
 const uint8_t GYRO_INIT_CMD_LENGTH = 9;
 const unsigned char gyro_init_data_buffer[GYRO_INIT_CMD_LENGTH] = {0xA5, 0x5A, 0x07, 0xB3, 0x01, 0x05, 0x07, 0xC7, 0xAA};	
@@ -14,6 +15,8 @@ extern "C"
 {
   int task_gyro(int argc, char *argv[])
   {
+    CGyroDevice gyro;
+  
     int fd;
     int i;
 
@@ -65,7 +68,8 @@ extern "C"
       {
         for (i = 0; i < (int)n; i++)
         {
-          printf("get %d 0x%x \r\n", i, buf[i]);
+          //printf("get %d 0x%x \r\n", i, buf[i]);
+	  gyro.Decode_frame(buf[i]);
         }
         write(fd,buf,n);
         fflush(stdout);
@@ -78,5 +82,5 @@ errout_with_buf:
 errout:
   fflush(stderr);
   return EXIT_FAILURE;
-  }
+}
 }
