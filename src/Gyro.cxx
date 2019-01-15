@@ -117,17 +117,116 @@ void CGyroDevice::rcvFrame()
 
 int CGyroDevice::gyroCmdDispatcher(uint8_t* msg,uint16_t len)
 {
+	enum
+	{
+		EGyroCaliOnce =			0xFFFFFFFF,
+		EGyroIapOn = 			0x01,
+		EGyroIapOff = 			0x02,
+		EGyroPowerOff = 		0x03,
+		EGyroPowerOn = 			0x04,
+		EGyroJumpBL = 			0x05,
+		EGyroRstBL = 			0x06,
+		EGyroAutoCaliOn =		0x07,
+		EGyroAutoCaliOff = 		0x08,
+		EGyroVersion = 			0x09,
+		EGyroMcuRst = 			0x0A,
+		EGyroDebug = 			0x0B,
+		EGyroInfo = 			0x0C,
+		EGyroSetLSB = 			0x0D,
+	};
+
 	if(pthread_mutex_lock(&gyro_mut)!=0)
 	{
 		printf("ERROR Gyro pthread_mutex_lock failed\n");
 	}
 
-	printf("gyro receive cmd\r\n");
-
+	uint32_t gyroCmd = *(uint32_t*)msg;
+	int ret = 0;
+	
+	switch(gyroCmd)
+	{
+		case EGyroCaliOnce:
+		{
+			//if(true == GyroDevice::Instance()->isOpen())
+			//		GyroDevice::Instance()->manualCalibration();
+			break;
+		}
+		case EGyroAutoCaliOn:
+		{
+			//GlobalControl::setGyroAutoCaliSwitchOn();
+			break;
+		}
+		case EGyroAutoCaliOff:
+		{
+			//GlobalControl::setGyroAutoCaliSwitchOff();
+			break;
+		}
+		case EGyroPowerOn:
+		{
+			/*
+			if(false == GyroDevice::Instance()->isOpen())
+					TaskManager::Instance()->addTask(NAMECODE_GyroTask);
+				GyroDevice::Instance()->rstTxPowerOn();
+			*/
+			break;
+		}
+		case EGyroPowerOff:
+		{
+			/*
+			if(true == GyroDevice::Instance()->isOpen())
+					GyroDevice::Instance()->rstTxPowerOff();
+			*/
+			break;
+		}
+		case EGyroIapOn:
+		{
+			break;
+		}
+		case EGyroIapOff:
+		{
+			break;
+		}
+		case EGyroJumpBL:
+		{
+			break;
+		}
+		case EGyroRstBL:
+		{
+			break;
+		}
+		case EGyroVersion:
+		{
+			break;
+		}
+		case EGyroMcuRst:
+		{
+			break;
+		}
+		case EGyroDebug:
+		{
+			break;
+		}
+		case EGyroInfo:
+		{
+			break;
+		}
+		case EGyroSetLSB:
+		{
+			break;
+		}
+		default:
+		{
+			printf("Unknow gyro command: 0x%08X\r\n", gyroCmd);
+			break;
+		}
+	}
+	
 	if ((pthread_mutex_unlock(&gyro_mut)) != 0)
     {
       printf("ERROR Gyro pthread_mutex_unlock failed\n");
     }
+
+	return ret;
 }
 
 void CGyroDevice::Decode_frame(unsigned char data){
