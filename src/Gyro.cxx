@@ -122,7 +122,7 @@ int CGyroDevice::gyroCmdDispatcher(uint8_t* msg,uint16_t len)
 		printf("ERROR Gyro pthread_mutex_lock failed\n");
 	}
 
-	printf("gyro receive cmd");
+	printf("gyro receive cmd\r\n");
 
 	if ((pthread_mutex_unlock(&gyro_mut)) != 0)
     {
