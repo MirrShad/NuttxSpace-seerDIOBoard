@@ -16,6 +16,7 @@
 #include "callbackhandler.h"
 
 #include "Gyro.h"
+#include "chassis.h"
 typedef struct
 {
 	uint32_t ECommand;
@@ -29,6 +30,7 @@ namespace{
   const uint8_t MAX_HANDLER_NUM = 128;
 
 	CCallbackHandler<CGyroDevice> gyroCmdHandler(GyroDevice::Instance(), &CGyroDevice::gyroCmdDispatcher);
+	CCallbackHandler<CChassisDevice> chassisCommandHandler(ChassisDevice::Instance(), &CChassisDevice::chassisCmdHandler);
 
   Handler_t CommandHandlerTab[MAX_HANDLER_NUM] =
 	{
@@ -63,7 +65,7 @@ namespace{
 		{0x00001031, NULL},
 		{0x00001032, NULL},
 		{0x00001033, NULL},
-		{0x00001034, NULL},//{0x00001034, &chassisCommandHandler},
+		{0x00001034, &chassisCommandHandler},
 
 		{0x00001038, NULL},
 		{0x00001039, NULL},
@@ -168,7 +170,7 @@ extern "C"
       //printf("receive cmd %d",int_ct);
 			bool findHandler = false;
 			int i = 0;
-			for(int i = 0; i < MAX_HANDLER_NUM; i++)
+			for(i = 0; i < MAX_HANDLER_NUM; i++)
 			{
 				if(int_ct == CommandHandlerTab[i].ECommand && CommandHandlerTab[i].pHandler != NULL)
 				{

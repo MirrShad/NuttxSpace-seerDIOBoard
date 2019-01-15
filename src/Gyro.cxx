@@ -531,6 +531,6 @@ void CGyroDevice::report()
 	pbMsg.acc_x = -9.8f*ax/16384.0f;
 	pbMsg.acc_y = 9.8f*ay/16384.0f;
 	pbMsg.acc_z = 9.8f*az/16384.0f;
-	printf("gyro get Message 2: %d,%d,%d\r\n",ax,ay,az);
+	//printf("gyro get Message 2: %d,%d,%d\r\n",ax,ay,az);
 }
 
