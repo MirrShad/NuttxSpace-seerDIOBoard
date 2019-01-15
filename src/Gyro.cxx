@@ -2,6 +2,13 @@
 #include <pb_encode.h>
 #include "message_imu.pb.h"
 
+#include <errno.h>
+#include <fcntl.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 namespace{
 	// version head
 	const int16_t VERSION_HEAD = 0xA5A5;
@@ -44,6 +51,56 @@ namespace{
 
 	bool isImuReady = false;
 	bool isMotionReady = false;
+
+	char *buf;
+}
+
+int CGyroDevice::doInit()
+{
+	char *devpath;
+	devpath = "/dev/ttyS1";
+	buf = (char *)malloc(11520);
+	if (buf == NULL)
+    {
+      fprintf(stderr, "GYRO ERROR: malloc failed: %d\n", errno);
+      return 1;
+    }
+	usart_fd = open(devpath, O_RDWR);
+	if (usart_fd < 0)
+    {
+      fprintf(stderr, "GYRO ERROR: open failed: %d\n", errno);
+      return 1;
+    }
+	if(write(usart_fd,gyro_init_data_buffer,GYRO_INIT_CMD_LENGTH)<0)
+    {
+      fprintf(stderr, "GYRO ERROR: gyro write failed: %d\n", errno);
+	  return 1;
+    }
+	bInited = true;
+	return 0;
+}
+
+void CGyroDevice::rcvFrame()
+{
+	ssize_t n = read(usart_fd, buf, 11520);
+    if (n == 0)
+    {
+		printf("read 0 bytes\r\n");
+    }
+    else if (n < 0)
+    {
+        printf("read failed: %d\n", errno);
+        fflush(stdout);
+    }
+    else
+    {
+		int i;
+    	for (i = 0; i < (int)n; i++)
+        {
+          	//printf("get %d 0x%x \r\n", i, buf[i]);
+	        Decode_frame(buf[i]);
+        }
+	}
 }
 
 void CGyroDevice::Decode_frame(unsigned char data){
@@ -337,6 +394,7 @@ void CGyroDevice::rstTxPowerOff()
 
 void CGyroDevice::rstTxPowerOn()
 {
+	printf("Gyro poweron");
 	//Message::Instance()->postMsg("Gyro poweron");
 }
 

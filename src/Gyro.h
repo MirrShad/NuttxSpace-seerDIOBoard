@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <semaphore.h>
+#include "Singleton.h"
 
 //uart reicer flag
 #define b_uart_head  0x80  //收到A5 头 标志位
@@ -15,7 +17,8 @@
 class CGyroDevice
 {
 public:
-  void Decode_frame(unsigned char date);
+	int doInit();
+	void rcvFrame();
 	void rstTxPowerOff();
 	void rstTxPowerOn();
 private:
@@ -71,17 +74,24 @@ private:
 	float m_lsb;
 	bool m_set_lsb_flag;
 
+  	
+  	unsigned char rx_buffer[RX_BUFFER_SIZE]; //接收数据缓冲区
+  	unsigned char rx_wr_index = 0; //缓冲写指针
+  	unsigned char RC_Flag = 0;  //接收状态标志字节
+  	void Decode_frame(unsigned char date);
+	unsigned char Sum_check(void);
+  	void UART2_Get_Motion(void);
+  	void UART2_Get_IMU(void);
+  	void UART2_CommandRoute(void);
+  	uint16_t version[4];
 
-  unsigned char rx_buffer[RX_BUFFER_SIZE]; //接收数据缓冲区
-  unsigned char rx_wr_index = 0; //缓冲写指针
-  unsigned char RC_Flag = 0;  //接收状态标志字节
-  unsigned char Sum_check(void);
-  void UART2_Get_Motion(void);
-  void UART2_Get_IMU(void);
-  void UART2_CommandRoute(void);
-  uint16_t version[4];
+  	void report();
 
-  void report();
+ 	sem_t gyro_sem;
+ 	int usart_fd;
+ 	bool bInited=false;
 };
+
+typedef NormalSingleton<CGyroDevice> GyroDevice;
 
 #endif

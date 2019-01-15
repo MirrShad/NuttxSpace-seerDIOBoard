@@ -15,15 +15,14 @@ extern "C"
 {
   int task_gyro(int argc, char *argv[])
   {
-    CGyroDevice gyro;
-  
+    //CGyroDevice gyro;
+/*  
     int fd;
     int i;
 
-    bool eof = false;
-    FAR char *buf;
+    //FAR char *buf;
     FAR char *devpath;
-
+    char *buf;
     devpath = "/dev/ttyS1";
     
     printf("Task Gyro start\r\n");
@@ -69,18 +68,23 @@ extern "C"
         for (i = 0; i < (int)n; i++)
         {
           //printf("get %d 0x%x \r\n", i, buf[i]);
-	  gyro.Decode_frame(buf[i]);
+	        GyroDevice::Instance()->Decode_frame(buf[i]);
         }
         write(fd,buf,n);
         fflush(stdout);
       }    
     }
-    
+*/
+
+  if(GyroDevice::Instance()->doInit()==1) goto errout;
+  while(true)
+    GyroDevice::Instance()->rcvFrame();
+
 errout_with_buf:
-  free(buf);
+  //free(buf);
 
 errout:
-  fflush(stderr);
+  //fflush(stderr);
   return EXIT_FAILURE;
-}
+  }
 }
