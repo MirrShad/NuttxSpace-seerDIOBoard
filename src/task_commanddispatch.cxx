@@ -13,17 +13,20 @@
 
 #include "task_commanddispatch.h"
 #include "udp.h"
-//#include "callbackhandler.h"
+#include "callbackhandler.h"
 
-/*
+#include "Gyro.h"
 typedef struct
 {
 	uint32_t ECommand;
 	CCallbackHandler_base* pHandler;
 }Handler_t;
-*/
+
 namespace{
-  /*
+  const uint8_t MAX_HANDLER_NUM = 128;
+
+	CCallbackHandler<CGyroDevice> gyroCmdHandler(GyroDevice::Instance(), &CGyroDevice::gyroCmdDispatcher);
+
   Handler_t CommandHandlerTab[MAX_HANDLER_NUM] =
 	{
 		{0x00000001, NULL},
@@ -85,15 +88,15 @@ namespace{
 		{0x00001058, NULL},
 		
 		{0x0000A001, &gyroCmdHandler},
-		{0x0000A002, &addTaskCommandHandler},
-		{0x0000A003, &forkConfigCommandHandler},
-		{0x0000A004, &configChassisTypeHandler},
-		{0x0000A005, &initMileageParamCommandHandler},
+		{0x0000A002, NULL},
+		{0x0000A003, NULL},
+		{0x0000A004, NULL},
+		{0x0000A005, NULL},//{0x0000A005, &initMileageParamCommandHandler},
 		{0x0000A006, NULL},
 		{0x0000A007, NULL},
 		{0x0000A008, NULL},	
 	};
-  */
+  
 }
 
 

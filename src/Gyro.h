@@ -5,7 +5,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <semaphore.h>
+#include <pthread.h>
+
 #include "Singleton.h"
 
 //uart reicer flag
@@ -14,13 +15,13 @@
 // USART Receiver buffer
 #define RX_BUFFER_SIZE 50 //接收缓冲区字节数
 
+
 class CGyroDevice
 {
 public:
 	int doInit();
 	void rcvFrame();
-	void rstTxPowerOff();
-	void rstTxPowerOn();
+	int gyroCmdDispatcher(uint8_t* msg,uint16_t len);
 private:
 	//解算后的角度值
 	float yaw;  //偏航角
@@ -86,10 +87,12 @@ private:
   	uint16_t version[4];
 
   	void report();
-
- 	sem_t gyro_sem;
+	void rstTxPowerOff();
+	void rstTxPowerOn();
+ 	
  	int usart_fd;
  	bool bInited=false;
+	pthread_mutex_t gyro_mut;
 };
 
 typedef NormalSingleton<CGyroDevice> GyroDevice;

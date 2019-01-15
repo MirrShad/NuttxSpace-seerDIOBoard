@@ -57,6 +57,8 @@ namespace{
 
 int CGyroDevice::doInit()
 {
+	pthread_mutex_init(&gyro_mut,NULL);
+
 	char *devpath;
 	devpath = "/dev/ttyS1";
 	buf = (char *)malloc(11520);
@@ -82,6 +84,11 @@ int CGyroDevice::doInit()
 
 void CGyroDevice::rcvFrame()
 {
+	if(pthread_mutex_lock(&gyro_mut)!=0)
+	{
+		printf("ERROR Gyro pthread_mutex_lock failed\n");
+	}
+
 	ssize_t n = read(usart_fd, buf, 11520);
     if (n == 0)
     {
@@ -101,6 +108,26 @@ void CGyroDevice::rcvFrame()
 	        Decode_frame(buf[i]);
         }
 	}
+
+	if ((pthread_mutex_unlock(&gyro_mut)) != 0)
+    {
+      printf("ERROR Gyro pthread_mutex_unlock failed\n");
+    }
+}
+
+int CGyroDevice::gyroCmdDispatcher(uint8_t* msg,uint16_t len)
+{
+	if(pthread_mutex_lock(&gyro_mut)!=0)
+	{
+		printf("ERROR Gyro pthread_mutex_lock failed\n");
+	}
+
+	printf("gyro receive cmd");
+
+	if ((pthread_mutex_unlock(&gyro_mut)) != 0)
+    {
+      printf("ERROR Gyro pthread_mutex_unlock failed\n");
+    }
 }
 
 void CGyroDevice::Decode_frame(unsigned char data){
