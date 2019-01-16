@@ -82,6 +82,11 @@ int CGyroDevice::doInit()
 	return 0;
 }
 
+bool CGyroDevice::isOpen()
+{
+	return bInited;
+}
+
 void CGyroDevice::rcvFrame()
 {
 	if(pthread_mutex_lock(&gyro_mut)!=0)
@@ -113,6 +118,26 @@ void CGyroDevice::rcvFrame()
     {
       printf("ERROR Gyro pthread_mutex_unlock failed\n");
     }
+}
+
+void CGyroDevice::doCalibration()
+{
+	if(pthread_mutex_lock(&gyro_mut)!=0)
+	{
+		printf("ERROR Gyro pthread_mutex_lock failed\n");
+	}
+
+	if(write(usart_fd,set_zero_buffer,GYRO_CMD_LENGTH)<0)
+    {
+      fprintf(stderr, "GYRO ERROR: gyro do calibration write failed: %d\n", errno);
+    }
+
+	if ((pthread_mutex_unlock(&gyro_mut)) != 0)
+    {
+      printf("ERROR Gyro pthread_mutex_unlock failed\n");
+    }
+
+	return;
 }
 
 int CGyroDevice::gyroCmdDispatcher(uint8_t* msg,uint16_t len)

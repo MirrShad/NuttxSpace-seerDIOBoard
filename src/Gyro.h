@@ -20,8 +20,10 @@ class CGyroDevice
 {
 public:
 	int doInit();
+	bool isOpen();
 	void rcvFrame();
 	int gyroCmdDispatcher(uint8_t* msg,uint16_t len);
+	void doCalibration();
 private:
 	//解算后的角度值
 	float yaw;  //偏航角
