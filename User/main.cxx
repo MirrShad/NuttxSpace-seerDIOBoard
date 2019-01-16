@@ -55,6 +55,7 @@
 #include "task_heartled.h"
 #include "task_commanddispatch.h"
 #include "task_gyro.h"
+#include "task_config.h"
 #include "udp.h"
 using namespace std;
 
@@ -90,6 +91,18 @@ extern "C"
     {
       int errcode = errno;
       printf("leds_main: ERROR: Failed to start led_daemon: %d\n",
+             errcode);
+      return EXIT_FAILURE;
+    }
+
+    printf("Init config task\r\n");
+    ret = task_create("config_daemon", CONFIG_CONFIG_PRIORITY,
+                    2048, task_config,
+                    NULL);
+    if (ret < 0)
+    {
+      int errcode = errno;
+      printf("leds_main: ERROR: Failed to start config_daemon: %d\n",
              errcode);
       return EXIT_FAILURE;
     }

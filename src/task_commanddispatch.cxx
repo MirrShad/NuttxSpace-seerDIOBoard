@@ -120,7 +120,7 @@ extern "C"
     int nbytes;
     int optval;
     int offset;
-		int ret;
+	int ret;
 
     printf("Start command dispatch task\r\n");
     /* Create a new UDP socket */
@@ -155,55 +155,53 @@ extern "C"
 
     for(;;)
     {
-      printf("wait a socket to come\r\n");
-      nbytes = recvfrom(sockfd, inbuf, 1024, 0,
+      	nbytes = recvfrom(sockfd, inbuf, 1024, 0,
                         (struct sockaddr*)&client, &recvlen);
-      if (nbytes < 0)
-      {
-        printf("server: %d. recv failed: %d\n", offset, errno);
-        close(sockfd);
-        exit(-1);
-      }
+      	if (nbytes < 0)
+      	{
+        	printf("command dispatch task server: %d. recv failed: %d\n", offset, errno);
+        	close(sockfd);
+        	exit(-1);
+      	}
 
-      int32_t int_ct;
-      memcpy(&int_ct,inbuf,sizeof(int_ct));
-      //printf("receive cmd %d",int_ct);
-			bool findHandler = false;
-			int i = 0;
-			for(i = 0; i < MAX_HANDLER_NUM; i++)
+      	int32_t int_ct;
+      	memcpy(&int_ct,inbuf,sizeof(int_ct));
+      	//printf("receive cmd %d",int_ct);
+		bool findHandler = false;
+		int i = 0;
+		for(i = 0; i < MAX_HANDLER_NUM; i++)
+		{
+			if(int_ct == CommandHandlerTab[i].ECommand && CommandHandlerTab[i].pHandler != NULL)
 			{
-				if(int_ct == CommandHandlerTab[i].ECommand && CommandHandlerTab[i].pHandler != NULL)
-				{
-					//CmdSocket::Instance()->lastCmdTyp_ = int_ct;
-			
-					ret = CommandHandlerTab[i].pHandler->handle(inbuf + sizeof(uint32_t), nbytes - sizeof(uint32_t));
-					findHandler = true;
-					break;
-				}
+				//CmdSocket::Instance()->lastCmdTyp_ = int_ct;
+		
+				ret = CommandHandlerTab[i].pHandler->handle(inbuf + sizeof(uint32_t), nbytes - sizeof(uint32_t));
+				findHandler = true;
+				break;
 			}
+		}
 
-			int32_t* retBuff = (int32_t*)inbuf;
-			if(findHandler)
-			{
-				retBuff[0] = 0;
-			}else
-			{
-				printf("Cannot find Handler 0x%x",int_ct);
-			}
+		int32_t* retBuff = (int32_t*)inbuf;
+		if(findHandler)
+		{
+			retBuff[0] = 0;
+		}else
+		{
+			printf("Cannot find Handler 0x%x",int_ct);
+		}
 
 			if(int_ct > 0xA000 || !findHandler)
-			{
-				uint16_t retMsgLen;
-				if(!findHandler) // return 0
-					retMsgLen = sizeof(uint32_t);
-				else if (ret < 0) // return 0, -1
-					retMsgLen = 2 * sizeof(uint32_t);
-				else
-					retMsgLen = ret + sizeof(uint32_t);
-				nbytes = sendto(sockfd,retBuff,retMsgLen,0,(struct sockaddr*)&client,addrlen);
-			}
-			//in_addr_t tmpaddr = ntohl(client.sin_addr.s_addr);
-
+		{
+			uint16_t retMsgLen;
+			if(!findHandler) // return 0
+				retMsgLen = sizeof(uint32_t);
+			else if (ret < 0) // return 0, -1
+				retMsgLen = 2 * sizeof(uint32_t);
+			else
+				retMsgLen = ret + sizeof(uint32_t);
+			nbytes = sendto(sockfd,retBuff,retMsgLen,0,(struct sockaddr*)&client,addrlen);
+		}
+		//in_addr_t tmpaddr = ntohl(client.sin_addr.s_addr);
     }
   }
 }

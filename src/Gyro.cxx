@@ -143,6 +143,8 @@ int CGyroDevice::gyroCmdDispatcher(uint8_t* msg,uint16_t len)
 	uint32_t gyroCmd = *(uint32_t*)msg;
 	int ret = 0;
 	
+	printf("gyro rcv cmd 0x%x\r\n",gyroCmd);
+
 	switch(gyroCmd)
 	{
 		case EGyroCaliOnce:
