@@ -23,6 +23,11 @@ typedef struct
 	CCallbackHandler_base* pHandler;
 }Handler_t;
 
+static int nullConfigCallback(uint8_t* msg,uint16_t len)
+{
+	return 0;
+}
+
 namespace{
 	uint8_t destip[4];
 	uint16_t destport;
@@ -31,6 +36,7 @@ namespace{
 
 	CCallbackHandler<CGyroDevice> gyroCmdHandler(GyroDevice::Instance(), &CGyroDevice::gyroCmdDispatcher);
 	CCallbackHandler<CChassisDevice> chassisCommandHandler(ChassisDevice::Instance(), &CChassisDevice::chassisCmdHandler);
+	CCallbackHandler<void> nullConfigCmdHandler(nullConfigCallback);
 
   Handler_t CommandHandlerTab[MAX_HANDLER_NUM] =
 	{
@@ -93,13 +99,13 @@ namespace{
 		{0x00001058, NULL},
 		
 		{0x0000A001, &gyroCmdHandler},
-		{0x0000A002, NULL},
-		{0x0000A003, NULL},
-		{0x0000A004, NULL},
-		{0x0000A005, NULL},//{0x0000A005, &initMileageParamCommandHandler},
-		{0x0000A006, NULL},
-		{0x0000A007, NULL},
-		{0x0000A008, NULL},	
+		{0x0000A002, &nullConfigCmdHandler},
+		{0x0000A003, &nullConfigCmdHandler},
+		{0x0000A004, &nullConfigCmdHandler},
+		{0x0000A005, &nullConfigCmdHandler},//{0x0000A005, &initMileageParamCommandHandler},
+		{0x0000A006, &nullConfigCmdHandler},
+		{0x0000A007, &nullConfigCmdHandler},
+		{0x0000A008, &nullConfigCmdHandler},	
 	};
   
 }
@@ -174,8 +180,7 @@ extern "C"
 			if(int_ct == CommandHandlerTab[i].ECommand && CommandHandlerTab[i].pHandler != NULL)
 			{
 				//CmdSocket::Instance()->lastCmdTyp_ = int_ct;
-		
-				ret = CommandHandlerTab[i].pHandler->handle(inbuf + sizeof(uint32_t), nbytes - sizeof(uint32_t));
+				ret = CommandHandlerTab[i].pHandler->handle(inbuf + sizeof(int_ct), (uint16_t)(nbytes - sizeof(int_ct)));
 				findHandler = true;
 				break;
 			}

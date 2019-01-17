@@ -29,17 +29,17 @@ public:
     int getMinor(){return SDB_VERSION_MINOR;}
     int getRevision(){return SDB_VERSION_REVISION;}
 
-    const char* getBuildTime()
+    const char* getMainVersion()
     {
         resetStr();
-        sprintf(verStr,"%s,%s",SDB_BUILD_DATE,SDB_BUILD_TIME);
+        sprintf(verStr,"%d.%d.%d",2,0,0);
         return verStr;
     }
 
     const char* getFullVersion()
     {
         resetStr();
-        sprintf(verStr,"%d.%d.%d, built on %s-%s",SDB_VERSION_MAJOR,SDB_VERSION_MINOR,SDB_VERSION_REVISION,SDB_BUILD_DATE,
+        sprintf(verStr,"%s, built on %s-%s",'2.0.0',SDB_BUILD_DATE,
             SDB_BUILD_TIME);
         return verStr;
     }

@@ -10,5 +10,6 @@ int CChassisDevice::chassisCmdHandler(uint8_t* pbData,uint16_t len)
     status = pb_decode(&stream,rbk_protocol_Message_NavSpeed_fields,&pbMsg);
     if(!status)
         printf("Decode fail in Chassis.cxx\r\n");
-    printf("get speed X = %f, Y = %f, Z = %f",pbMsg.x,pbMsg.y,pbMsg.rotate);
+    
+    
 }

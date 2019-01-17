@@ -252,9 +252,9 @@ extern "C"
 
         case CConfigData::EGetMainVersion:
         {
-            /*const char *p;
+            const char *p;
             p = Version::Instance()->getMainVersion();
-            memcpy(crd.m_config_report.m_buffer, (void *)p, SDB_VERSION_LENGTH);*/
+            memcpy(crd.m_config_report.m_buffer, (void *)p, SDB_VERSION_LENGTH);
             break;
         }
 
