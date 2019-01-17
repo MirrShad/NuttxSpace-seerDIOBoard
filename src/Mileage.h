@@ -4,7 +4,6 @@
 #include "Singleton.h"
 #include <stdint.h>
 #include <string.h>
-#include "message_odometer.pb.h"
 
 #define helf_PI	1.570796f
 

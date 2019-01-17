@@ -1,8 +1,9 @@
 ############################################################################
-# apps/examples/cxxtest/Makefile
+# apps/examples/cxxtest/Make.defs
+# Adds selected applications to apps/ build
 #
-#   Copyright (C) 2009-2012 Gregory Nutt. All rights reserved.
-#   Author: Gregory Nutt <spudmonkey@racsa.co.cr>
+#   Copyright (C) 2015 Gregory Nutt. All rights reserved.
+#   Author: Gregory Nutt <gnutt@nuttx.org>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,31 +34,5 @@
 #
 ############################################################################
 
--include $(TOPDIR)/Make.defs
+CONFIGURED_APPS += DriverProtocol
 
-# CXX test program
-
-ASRCS =
-CSRCS =
-CXXSRCS = task_heartled.cxx task_commanddispatch.cxx task_gyro.cxx task_config.cxx task_chassis.cxx Gyro.cxx chassis.cxx Mileage.cxx ProtocolCanDriver.cxx
-MAINSRC = 
-
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
-
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
-
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)DriverProtocol"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)DriverProtocol"}
-
-CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
-PROGNAME = $(CONFIG_XYZ_PROGNAME)
-
-# cxxtest built-in application info
-
-APPNAME = SeerDIOBoard
-PRIORITY = SCHED_PRIORITY_DEFAULT
-STACKSIZE = 4096
-
-include $(APPDIR)/Application.mk

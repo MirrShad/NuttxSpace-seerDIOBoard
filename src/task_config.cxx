@@ -73,6 +73,7 @@ extern "C"
 
         for(;;)
         {
+            recvlen = addrlen;
             nbytes = recvfrom(sockfd, _configBuffer, 1024, 0,
                         (struct sockaddr*)&client5003, &recvlen);
             if (nbytes < 0)

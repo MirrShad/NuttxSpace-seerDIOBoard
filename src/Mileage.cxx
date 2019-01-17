@@ -484,8 +484,9 @@ void CMileage::initialzeParam4cp(const float& e, const float (&r)[4], const int3
 */
 int CMileage::initializeParam(uint8_t* pbData, uint16_t len)
 {
-	this->doInit();
+	printf("initialize Param\r\n");
 	
+	this->doInit();
 	bool status;
 	{
 		rbk_protocol_Message_ChassisConfig pbMsg = rbk_protocol_Message_ChassisConfig_init_zero;
@@ -521,6 +522,7 @@ int CMileage::initializeParam(uint8_t* pbData, uint16_t len)
 		{
 			for (int i = 0; i < pbMsg.driveID_count; i++)
 			{
+				//ChassisDevice::Instance()->Protocol()->calcRxID(1);
 				ChassisDevice::Instance()->Protocol()->setMotorRxId(i, \
 					ChassisDevice::Instance()->Protocol()->calcRxID(pbMsg.driveID[i]));
 				ChassisDevice::Instance()->Protocol()->setMotorTxId(i, \
@@ -532,10 +534,8 @@ int CMileage::initializeParam(uint8_t* pbData, uint16_t len)
 			//	Console::Instance()->printf("Config driver id %d\r\n", pbMsg.driveID[i]);
 			}
 			m_inverse = 1;
-			ChassisDevice::Instance()->setStart();
 		}
 	}
-	
 	return 0;
 }
 /*

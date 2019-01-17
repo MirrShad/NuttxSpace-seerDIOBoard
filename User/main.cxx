@@ -56,6 +56,7 @@
 #include "task_commanddispatch.h"
 #include "task_gyro.h"
 #include "task_config.h"
+#include "task_chassis.h"
 #include "udp.h"
 using namespace std;
 
@@ -130,6 +131,19 @@ extern "C"
              errcode);
       return EXIT_FAILURE;
     }
+
+    printf("Init chassis task\r\n");
+    ret = task_create("chassis_daemon", CONFIG_CHASSIS_PRIORITY,
+                    2048, task_chassis,
+                    NULL);
+    if (ret < 0)
+    {
+      int errcode = errno;
+      printf("gyro_main: ERROR: Failed to start chassis_daemon: %d\n",
+             errcode);
+      return EXIT_FAILURE;
+    }
+    
 
     return 0;
   }

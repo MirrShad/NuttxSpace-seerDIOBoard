@@ -38,21 +38,18 @@
 # CXX test program
 
 ASRCS =
-CSRCS =
-CXXSRCS = task_heartled.cxx task_commanddispatch.cxx task_gyro.cxx task_config.cxx task_chassis.cxx Gyro.cxx chassis.cxx Mileage.cxx ProtocolCanDriver.cxx
+CSRCS = 
+CXXSRCS = ProtocolCopleyCAN.cxx
 MAINSRC = 
 
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}
-
-CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
-CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)protobuffer"}
+CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
+PROGNAME = $(CONFIG_XYZ_PROGNAME)
 
 CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)DriverProtocol"}
 CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)DriverProtocol"}
 
-CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
-PROGNAME = $(CONFIG_XYZ_PROGNAME)
+CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)src"}
+CXXFLAGS += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)src"}
 
 # cxxtest built-in application info
 

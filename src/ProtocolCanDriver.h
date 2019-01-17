@@ -4,6 +4,7 @@
 #include "Singleton.h"
 #include <stdint.h>
 #include "Mileage.h"
+#include <stdio.h>
 
 class CDriverCanProtocol
 {

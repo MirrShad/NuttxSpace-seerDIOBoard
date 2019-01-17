@@ -133,22 +133,13 @@ int configChassisTypeFunc(uint8_t* pbData, uint16_t len)
 		}
 		
 		//printf("Chassis=%d, ChassisType=%d, Protocol=%d\r\n", pbMsg.bChassisExist, pbMsg.chassisType, pbMsg.driverBrand);
-		
 		if(20 == pbMsg.bChassisExist)
 		{
-			if (4 == pbMsg.chassisType)
-			{
-				/*TaskManager::Instance()->addTask(NAMECODE_MarshellChassisDriverTask);
-				Mileage::Instance()->setChassisType(SINGLE_STEER_PREC);
-				MarshellChassisDriver::Instance()->doInit();
-				Console::Instance()->printf("Config Curtis as ChassisDriver\r\n");*/
-			} else {
-				ChassisDevice::Instance()->setProtocol((uint8_t)pbMsg.driverBrand);
-				Mileage::Instance()->setChassisType((chassisTypeEnum)pbMsg.chassisType);
-				//TaskManager::Instance()->addTask(NAMECODE_ChassisDriverTask);		
-			}
-
+			ChassisDevice::Instance()->setProtocol((uint8_t)pbMsg.driverBrand);
+			Mileage::Instance()->setChassisType((chassisTypeEnum)pbMsg.chassisType);
+			ChassisDevice::Instance()->setStart();
 		}
+		
 	}
 	return 0;
 }
@@ -203,6 +194,7 @@ extern "C"
 
     for(;;)
     {
+		recvlen = addrlen;
       	nbytes = recvfrom(sockfd, inbuf, 1024, 0,
                         (struct sockaddr*)&client, &recvlen);
       	if (nbytes < 0)
