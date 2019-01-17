@@ -15,8 +15,11 @@
 #include "udp.h"
 #include "callbackhandler.h"
 
+#include <pb_decode.h>
 #include "Gyro.h"
 #include "chassis.h"
+#include "message_chassisconfig.pb.h"
+#include "Mileage.h"
 typedef struct
 {
 	uint32_t ECommand;
@@ -28,6 +31,8 @@ static int nullConfigCallback(uint8_t* msg,uint16_t len)
 	return 0;
 }
 
+static int configChassisTypeFunc(uint8_t* msg,uint16_t len);
+
 namespace{
 	uint8_t destip[4];
 	uint16_t destport;
@@ -37,6 +42,8 @@ namespace{
 	CCallbackHandler<CGyroDevice> gyroCmdHandler(GyroDevice::Instance(), &CGyroDevice::gyroCmdDispatcher);
 	CCallbackHandler<CChassisDevice> chassisCommandHandler(ChassisDevice::Instance(), &CChassisDevice::chassisCmdHandler);
 	CCallbackHandler<void> nullConfigCmdHandler(nullConfigCallback);
+	CCallbackHandler<void> configChassisTypeHandler(configChassisTypeFunc);
+	CCallbackHandler<CMileage> initMileageParamCommandHandler(Mileage::Instance(), &CMileage::initializeParam);
 
   Handler_t CommandHandlerTab[MAX_HANDLER_NUM] =
 	{
@@ -101,8 +108,8 @@ namespace{
 		{0x0000A001, &gyroCmdHandler},
 		{0x0000A002, &nullConfigCmdHandler},
 		{0x0000A003, &nullConfigCmdHandler},
-		{0x0000A004, &nullConfigCmdHandler},
-		{0x0000A005, &nullConfigCmdHandler},//{0x0000A005, &initMileageParamCommandHandler},
+		{0x0000A004, &configChassisTypeHandler},
+		{0x0000A005, &initMileageParamCommandHandler},
 		{0x0000A006, &nullConfigCmdHandler},
 		{0x0000A007, &nullConfigCmdHandler},
 		{0x0000A008, &nullConfigCmdHandler},	
@@ -110,6 +117,41 @@ namespace{
   
 }
 
+int configChassisTypeFunc(uint8_t* pbData, uint16_t len)
+{
+	bool status;
+
+	{
+		rbk_protocol_Message_ChassisDemandConfig pbMsg = rbk_protocol_Message_ChassisDemandConfig_init_zero;
+		pb_istream_t stream = pb_istream_from_buffer(pbData, len);
+		status = pb_decode(&stream, rbk_protocol_Message_ChassisDemandConfig_fields, &pbMsg);
+		
+		if (!status)
+		{
+			printf("configChassisTypeFunc Decoding failed: \n");
+			return -1;
+		}
+		
+		//printf("Chassis=%d, ChassisType=%d, Protocol=%d\r\n", pbMsg.bChassisExist, pbMsg.chassisType, pbMsg.driverBrand);
+		
+		if(20 == pbMsg.bChassisExist)
+		{
+			if (4 == pbMsg.chassisType)
+			{
+				/*TaskManager::Instance()->addTask(NAMECODE_MarshellChassisDriverTask);
+				Mileage::Instance()->setChassisType(SINGLE_STEER_PREC);
+				MarshellChassisDriver::Instance()->doInit();
+				Console::Instance()->printf("Config Curtis as ChassisDriver\r\n");*/
+			} else {
+				ChassisDevice::Instance()->setProtocol((uint8_t)pbMsg.driverBrand);
+				Mileage::Instance()->setChassisType((chassisTypeEnum)pbMsg.chassisType);
+				//TaskManager::Instance()->addTask(NAMECODE_ChassisDriverTask);		
+			}
+
+		}
+	}
+	return 0;
+}
 
 extern "C"
 {
