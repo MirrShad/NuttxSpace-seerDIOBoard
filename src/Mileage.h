@@ -136,7 +136,7 @@ public:
 	//void forwardKinematicsTrans(const WheelPos& wheelPos, PlanarPos& planarPos);
 
 	/// Inverse Kinematics
-	//void inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& wheelVel);
+	void inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& wheelVel);
 
 	uint8_t num_of_wheel();
 	chassisTypeEnum chassisType() {return m_chassisType;}
@@ -180,7 +180,7 @@ public:
 		return car_rotate;
 	}
 
-	//void setVelocities(const WheelVel& v_wheelvel);
+	void setVelocities(const WheelVel& v_wheelvel);
 	int32_t getVel(uint8_t idx){return m_vel.at(idx);}
 	//virtual int report(void* arg = NULL);
 
@@ -188,10 +188,10 @@ private:
 /*
 	/// Forward Kinematics - Diff
 	void forwardKinematicsTransDiff(const WheelPos& wheelPos, PlanarPos& planarPos);
-
+*/
 	/// Inverse Kinematics - Diff
 	void inverseKinematicsTransDiff(const PlanarVel& planarVel, WheelVel& wheelVel);
-
+/*
 	//Tricycle
 	void forwardKinematicsTransTricycle(const WheelPos& wheelPos, PlanarPos& planarPos);
 

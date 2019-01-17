@@ -22,10 +22,21 @@ public:
 	}
 	int setStart();
 	void waitStart();
+	void newSpeedCmd();
+	int waitCmd();
+	void sendSpeedCmd();
 private:
 	uint8_t _protocol;
 	CDriverCanProtocol* _driverProtocol;
 	sem_t openSem;
+	sem_t cmdSem;
+	bool bNewSpeedCmd;
+	bool bOdoCmd;
+	bool bStateCmd;
+	int currentCmd;//0:null 1:speed 2:odo 3:state
+	float ori_global_X;
+	float ori_global_Y;
+	float ori_global_W;
 };
 
 typedef NormalSingleton<CChassisDevice> ChassisDevice;

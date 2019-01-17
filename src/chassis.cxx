@@ -2,11 +2,21 @@
 #include "message_navigation.pb.h"
 #include <pb_decode.h>
 #include "ProtocolCopleyCAN.h"
+#include "Mileage.h"
+#include "ChassisCmdType.h"
 
 CChassisDevice::CChassisDevice()
 {
 	_driverProtocol = NULL;
+	currentCmd = 0;
+	bNewSpeedCmd = false;
+	bOdoCmd = false;
+	bStateCmd = false;
 	sem_init(&openSem,0,0);
+	sem_init(&cmdSem,0,0);
+	ori_global_X = 0;
+	ori_global_Y = 0;
+	ori_global_W = 0;
 }
 
 int CChassisDevice::chassisCmdHandler(uint8_t* pbData,uint16_t len)
@@ -17,6 +27,10 @@ int CChassisDevice::chassisCmdHandler(uint8_t* pbData,uint16_t len)
     status = pb_decode(&stream,rbk_protocol_Message_NavSpeed_fields,&pbMsg);
     if(!status)
         printf("Decode fail in Chassis.cxx\r\n");   
+	ori_global_X = pbMsg.x;
+	ori_global_Y = pbMsg.y;
+	ori_global_W = pbMsg.rotate;
+	newSpeedCmd();
 	return 0;
 }
 
@@ -112,4 +126,64 @@ void CChassisDevice::waitStart()
 		printf("Error: chassis waitStart can not wait semophore value\r\n");
 	}
 	return;
+}
+
+int CChassisDevice::waitCmd()
+{
+	int value;
+	int status = sem_getvalue(&cmdSem, &value);
+	if(status<0){
+		printf("Error: chassis waitCmd can not get semophore value\r\n");
+	}
+	status = sem_wait(&cmdSem);
+	if(status!=0){
+		printf("Error: chassis waitCmd can not wait semophore value\r\n");
+	}
+	if(bNewSpeedCmd)
+	{
+		bNewSpeedCmd = false;
+		currentCmd = 1;
+	}else if(bOdoCmd)
+	{
+		bOdoCmd = false;
+		currentCmd = 2;
+	}else if(bStateCmd)
+	{
+		bStateCmd = false;
+		currentCmd = 3;
+	}
+	return currentCmd;
+}
+
+void CChassisDevice::newSpeedCmd()
+{
+	int value;
+	int status = sem_getvalue(&cmdSem, &value);
+	if(status<0){
+		printf("Error: chassis setStart can not get semophore value\r\n");
+	}
+	bNewSpeedCmd = true;
+	status = sem_post(&cmdSem);
+	if(status!=0){
+		printf("Error: chassis setStart can not post semophore value\r\n");
+	}
+}
+
+void CChassisDevice::sendSpeedCmd()
+{
+	CMileage::WheelVel wheelVel;
+	PlanarVel planarVel;
+	planarVel.vx = ori_global_X;
+	planarVel.vy = ori_global_Y;
+	planarVel.w = ori_global_W;
+	Mileage::Instance()->inverseKinematicsTrans(planarVel, wheelVel);
+	Mileage::Instance()->setVelocities(wheelVel);
+	int i;
+	for(i = 0; i < Mileage::Instance()->num_of_wheel(); i++)
+	{
+		struct can_msg_s TxMessage;
+		_driverProtocol->encode(i, DRV_CMD_TARGET_SPEED, Mileage::Instance()->getVel(i), TxMessage);
+		printf("send speed down\r\n");
+		//_canBaseRouter.putMsg(TxMessage);
+	}
 }

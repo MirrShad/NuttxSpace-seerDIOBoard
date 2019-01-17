@@ -16,11 +16,18 @@ extern "C"
 {
   int task_chassis(int argc, char *argv[])
   {
+    printf("task chassis wait !!!!!!!!!!\r\n");
+    ChassisDevice::Instance()->waitStart();
+    printf("task chassis start !!!!!!!!!!\r\n");
     for(;;)
     {
-      printf("task chassis wait !!!!!!!!!!\r\n");
-      ChassisDevice::Instance()->waitStart();
-      printf("task chassis start !!!!!!!!!!\r\n");
+      int tempCmd = ChassisDevice::Instance()->waitCmd();
+      if(1 == tempCmd)
+        ChassisDevice::Instance()->sendSpeedCmd();//send speed cmd
+      else if(2 == tempCmd)
+        ;//query odo cmd
+      /*else if(3 == tempCmd)
+        ;//query state cmd*/
     }
   }
 }

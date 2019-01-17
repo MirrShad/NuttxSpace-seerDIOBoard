@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "Mileage.h"
 #include <stdio.h>
+#include "ChassisCmdType.h"
 
 class CDriverCanProtocol
 {
@@ -81,8 +82,8 @@ class CDriverCanProtocol
 		virtual ~CDriverCanProtocol(){};
 		///virtual int32_t getMotorIndex(const CanRxMsg&) = 0; 
 		
-		//virtual void encode(uint8_t motor_idx, motorDriverCmdType ct, int32_t val, CanTxMsg&) = 0;
-		//virtual bool decode(motorDriverCmdType& ct, int32_t& val, const CanRxMsg&) = 0;
+		virtual void encode(uint8_t motor_idx, motorDriverCmdType ct, int32_t val, struct can_msg_s& msg) = 0;
+		virtual bool decode(motorDriverCmdType& ct, int32_t& val, const struct can_msg_s& msg) = 0;
 		/*virtual void parseErrCode(uint8_t motorIdx, uint32_t errCode) const 
 			{Console::Instance()->printf("motor%d error:0x%08X\r\n", motorIdx, errCode);}*/
 

@@ -137,36 +137,25 @@ void CMileage::forwardKinematicsTrans(const WheelPos& wheelPos, PlanarPos& plana
 		seer_assert(false);
 	}
 }
-
+*/
 /// Inverse Kinematics
 void CMileage::inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& wheelVel) {
 
-	if(DOUBLE_DIFF == Mileage::Instance()->chassisType())
-		inverseKinematicsTransDiff(planarVel, wheelVel);
+	
+	inverseKinematicsTransDiff(planarVel, wheelVel);
 
-	else if(TRICYCLE == Mileage::Instance()->chassisType())
-	{
-		inverseKinematicsTransTricycle(planarVel, wheelVel);
-	}
-	else if(QUAD_MACNUM == Mileage::Instance()->chassisType())
-	{
-		inverseKinematicsTransMecanum(planarVel, wheelVel);
-	}
-	else
-	{
-		seer_assert(false);
-	}
 
 	//confirm there is no wheel overspeed
 	bool overspeedFlag = false;
 	float maxSpeed = 0.0f;
 	for(int i = 0; i < num_of_wheel(); i++)
 	{
-		if(fabs(wheelVel.at(i)) > m_motor_max_speed)
+		float tempVel = wheelVel.at(i)>0?wheelVel.at(i):(-1*wheelVel.at(i));
+		if(tempVel > m_motor_max_speed)
 		{
-			if(fabs(wheelVel.at(i)) > maxSpeed)
+			if(tempVel > maxSpeed)
 			{
-				maxSpeed = fabs(wheelVel.at(i));
+				maxSpeed = tempVel;
 			}
 			overspeedFlag = true;
 		}
@@ -175,7 +164,8 @@ void CMileage::inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& whee
 #define ENABLE_SPEED_LIMIT 1
 	if(overspeedFlag)
 	{
-		Message::Instance()->postErrMsg(CODE_MOTO_OVER,"Error in Mileage.Motor speed overflow.");
+		printf("Overspeed !!!!!\r\n");
+		//Message::Instance()->postErrMsg(CODE_MOTO_OVER,"Error in Mileage.Motor speed overflow.");
 #if ENABLE_SPEED_LIMIT
 		for(int i = 0; i < num_of_wheel(); i++)
 		{
@@ -184,12 +174,12 @@ void CMileage::inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& whee
 #endif
 	}
 
-	else if (true == Message::Instance()->checkErrOccur(CODE_MOTO_OVER))
-		Message::Instance()->clearErr(CODE_MOTO_OVER);
+	/*else if (true == Message::Instance()->checkErrOccur(CODE_MOTO_OVER))
+		Message::Instance()->clearErr(CODE_MOTO_OVER);*/
 
 }
 
-
+/*
 /// Forward Kinematics - Diff
 void CMileage::forwardKinematicsTransDiff(const WheelPos& wheelPos, PlanarPos& planarPos)
 {
@@ -202,7 +192,7 @@ void CMileage::forwardKinematicsTransDiff(const WheelPos& wheelPos, PlanarPos& p
 
 	return ;
 }
-
+*/
 /// Inverse Kinematics - Diff
 void CMileage::inverseKinematicsTransDiff(const PlanarVel& planarVel, WheelVel& wheelVel)
 {
@@ -220,7 +210,7 @@ void CMileage::inverseKinematicsTransDiff(const PlanarVel& planarVel, WheelVel& 
 
 	return ;
 }
-
+/*
 //	alpha = (pi/6)
 //  S <=> sin(alpha)
 //  C <=> cos(alpha)
@@ -561,7 +551,7 @@ void CMileage::getPositions(iWheelPos& p_wheelpos)
 	}
 
 }
-
+*/
 void CMileage::setVelocities(const WheelVel& v_wheelvel)
 {
 	WheelVel temp_wheelvel;
@@ -594,7 +584,7 @@ void CMileage::setVelocities(const WheelVel& v_wheelvel)
 		m_vel.at(3) = temp_wheelvel.at(3) * m_inverse;
 	}
 }
-*/
+
 uint8_t CMileage::num_of_wheel()
 {
 	if (DOUBLE_DIFF == m_chassisType)
