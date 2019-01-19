@@ -77,7 +77,7 @@ class CDriverCanProtocol
 			return _inverse[idx];
 		}
 		
-		//virtual bool getInitMsg(CanTxMsg&) {return false;}
+		virtual bool getInitMsg(struct can_msg_s& msg) {return false;}
 		
 		virtual ~CDriverCanProtocol(){};
 		///virtual int32_t getMotorIndex(const CanRxMsg&) = 0; 
