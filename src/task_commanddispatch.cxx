@@ -135,6 +135,7 @@ int configChassisTypeFunc(uint8_t* pbData, uint16_t len)
 		//printf("Chassis=%d, ChassisType=%d, Protocol=%d\r\n", pbMsg.bChassisExist, pbMsg.chassisType, pbMsg.driverBrand);
 		if(20 == pbMsg.bChassisExist)
 		{
+			printf("set chassis Protocol %d\r\n",(uint8_t)pbMsg.driverBrand);
 			ChassisDevice::Instance()->setProtocol((uint8_t)pbMsg.driverBrand);
 			Mileage::Instance()->setChassisType((chassisTypeEnum)pbMsg.chassisType);
 			ChassisDevice::Instance()->setStart();

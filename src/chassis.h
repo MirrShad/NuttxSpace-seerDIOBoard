@@ -25,6 +25,7 @@ public:
 	void newSpeedCmd();
 	int waitCmd();
 	void sendSpeedCmd();
+	int doInit();
 private:
 	uint8_t _protocol;
 	CDriverCanProtocol* _driverProtocol;

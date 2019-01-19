@@ -23,7 +23,7 @@ public:
 	virtual int32_t getMotorIndex(const struct can_msg_s&);	
 	virtual void encode(uint8_t motor_idx, motorDriverCmdType ct, int32_t val, struct can_msg_s&);
 	virtual bool decode(motorDriverCmdType& ct, int32_t& val, const struct can_msg_s&);
-	virtual bool getInitMsg(struct can_msg_s&);
+	virtual bool getInitMsg(struct can_msg_s& msg);
 	virtual void parseErrCode(uint8_t motorIdx, uint32_t errCode) const;
 		
 	virtual uint16_t calcRxID(uint16_t ID);

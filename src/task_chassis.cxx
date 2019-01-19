@@ -19,6 +19,7 @@ extern "C"
     printf("task chassis wait !!!!!!!!!!\r\n");
     ChassisDevice::Instance()->waitStart();
     printf("task chassis start !!!!!!!!!!\r\n");
+    ChassisDevice::Instance()->doInit();
     for(;;)
     {
       int tempCmd = ChassisDevice::Instance()->waitCmd();

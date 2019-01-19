@@ -4,6 +4,9 @@
 #include "ProtocolCopleyCAN.h"
 #include "Mileage.h"
 #include "ChassisCmdType.h"
+#include <nuttx/can/seer_can.h>
+#include <fcntl.h>
+#include <errno.h>
 
 CChassisDevice::CChassisDevice()
 {
@@ -17,6 +20,36 @@ CChassisDevice::CChassisDevice()
 	ori_global_X = 0;
 	ori_global_Y = 0;
 	ori_global_W = 0;
+}
+
+int CChassisDevice::doInit()
+{
+	int fd = open("/dev/can1", O_WRONLY);
+    if (fd < 0)
+    {
+      int errcode = errno;
+      printf("chassis: ERROR: Failed to open %s: %d\n",
+             "/dev/can1", errcode);
+      return 1;
+    }
+	struct can_msg_s TxMessage;
+	printf("chassis get init message\r\n");
+	while(_driverProtocol->getInitMsg(TxMessage))
+	{
+		printf("send init msg");
+		write(fd, &TxMessage, 1);
+	}
+	/*
+	FAR struct can_msg_s testMsg;
+	testMsg.cm_hdr.ch_id = 0x702;
+	testMsg.cm_hdr.ch_rtr = 1;
+	testMsg.cm_hdr.ch_extid = 1;
+	testMsg.cm_hdr.ch_dlc = 4;
+	testMsg.cm_data[0] = 0x11;
+	testMsg.cm_data[1] = 0x22;
+	testMsg.cm_data[2] = 0x33;
+	testMsg.cm_data[3] = 0x44;
+	write(fd, &testMsg, 1);*/
 }
 
 int CChassisDevice::chassisCmdHandler(uint8_t* pbData,uint16_t len)
@@ -183,7 +216,7 @@ void CChassisDevice::sendSpeedCmd()
 	{
 		struct can_msg_s TxMessage;
 		_driverProtocol->encode(i, DRV_CMD_TARGET_SPEED, Mileage::Instance()->getVel(i), TxMessage);
-		printf("send speed down\r\n");
+		//printf("send speed down\r\n");
 		//_canBaseRouter.putMsg(TxMessage);
 	}
 }
