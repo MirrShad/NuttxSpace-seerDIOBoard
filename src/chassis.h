@@ -27,6 +27,7 @@ public:
 	void sendSpeedCmd();
 	int doInit();
 private:
+	int can1_fd;
 	uint8_t _protocol;
 	CDriverCanProtocol* _driverProtocol;
 	sem_t openSem;

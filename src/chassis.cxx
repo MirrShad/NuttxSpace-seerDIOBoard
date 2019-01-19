@@ -24,8 +24,8 @@ CChassisDevice::CChassisDevice()
 
 int CChassisDevice::doInit()
 {
-	int fd = open("/dev/can1", O_WRONLY);
-    if (fd < 0)
+	can1_fd = open("/dev/can1", O_WRONLY);
+    if (can1_fd < 0)
     {
       int errcode = errno;
       printf("chassis: ERROR: Failed to open %s: %d\n",
@@ -37,7 +37,7 @@ int CChassisDevice::doInit()
 	while(_driverProtocol->getInitMsg(TxMessage))
 	{
 		//printf("send init msg id 0x%x, dlc %x, data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x",TxMessage.cm_hdr.ch_id,TxMessage.cm_hdr.ch_dlc,TxMessage.cm_data[0],TxMessage.cm_data[1],TxMessage.cm_data[2],TxMessage.cm_data[3],TxMessage.cm_data[4],TxMessage.cm_data[5],TxMessage.cm_data[6],TxMessage.cm_data[7]);
-		write(fd, &TxMessage, 1);
+		write(can1_fd, &TxMessage, 1);
 	}
 	/*
 	FAR struct can_msg_s testMsg;
@@ -214,9 +214,9 @@ void CChassisDevice::sendSpeedCmd()
 	int i;
 	for(i = 0; i < Mileage::Instance()->num_of_wheel(); i++)
 	{
-		struct can_msg_s TxMessage;
+		FAR struct can_msg_s TxMessage;
 		_driverProtocol->encode(i, DRV_CMD_TARGET_SPEED, Mileage::Instance()->getVel(i), TxMessage);
 		//printf("send speed down\r\n");
-		//_canBaseRouter.putMsg(TxMessage);
+		write(can1_fd, &TxMessage, 1);
 	}
 }
