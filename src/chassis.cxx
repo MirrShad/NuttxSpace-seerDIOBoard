@@ -27,7 +27,7 @@ int CChassisDevice::doInit()
 	while(!Mileage::Instance()->isInited())
 		sleep(1);
 
-	can1_fd = open("/dev/can1", O_WRONLY);
+	can1_fd = open("/dev/can1", O_RDWR);
     if (can1_fd < 0)
     {
       int errcode = errno;
@@ -162,6 +162,40 @@ void CChassisDevice::waitStart()
 		printf("Error: chassis waitStart can not wait semophore value\r\n");
 	}
 	return;
+}
+
+int CChassisDevice::waitQueryRet()
+{
+	FAR struct can_msg_s RxMessage;
+	int status;
+	int i;
+	
+	for(i = 0; i < Mileage::Instance()->num_of_wheel(); i++)
+	{
+		do{
+			//printf("wait again \r\n");
+			status = read(can1_fd, &RxMessage, 1);
+			if(status == 0)
+			{
+				//printf("get Msg ID:0x%x Data:0x%x 0x%x 0x%x 0x%x\r\n",RxMessage.cm_hdr.ch_id,RxMessage.cm_data[0],RxMessage.cm_data[1],RxMessage.cm_data[2],RxMessage.cm_data[3]);
+				_driverProtocol->decode(_retTyp[i], _retVal[i], RxMessage);
+				if(_retTyp[i] == DRV_CMD_ACTURAL_POS)
+				{
+					printf("get query odo response\r\n");
+					break;
+				}
+
+			}
+			else if(status==EINTR && bNewSpeedCmd)
+				printf("interrupt by an speed cmd ignore it\r\n");
+			else
+			{
+				printf("Error: chassis wait QueryRet get errno %d\r\n",-1*status);
+				return -1;
+			}
+		}while(true);
+		
+	}
 }
 
 int CChassisDevice::waitCmd()

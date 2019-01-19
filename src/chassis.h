@@ -27,6 +27,7 @@ public:
 	int waitCmd();
 	void sendSpeedCmd();
 	void sendQueryCmd();
+	int waitQueryRet();
 	int doInit();
 private:
 	int can1_fd;
@@ -41,6 +42,8 @@ private:
 	float ori_global_X;
 	float ori_global_Y;
 	float ori_global_W;
+	int32_t _retVal[4];
+	motorDriverCmdType _retTyp[4];
 };
 
 typedef NormalSingleton<CChassisDevice> ChassisDevice;
