@@ -113,6 +113,7 @@ public:
 					
 					for (int i = 0; i < 4; i++)
 						m_inv_one[i] = 1;
+					m_param_inited = false;
 				}
 	virtual ~CMileage(){}	
 		
@@ -183,6 +184,7 @@ public:
 	void setVelocities(const WheelVel& v_wheelvel);
 	int32_t getVel(uint8_t idx){return m_vel.at(idx);}
 	//virtual int report(void* arg = NULL);
+	bool isInited(){return m_param_inited;}
 
 private:
 /*
@@ -257,6 +259,7 @@ private:
 	float m_delta_y;
 	float m_delta_angle;
 	float car_rotate;
+	bool m_param_inited;
 };
 typedef NormalSingleton<CMileage> Mileage;
 #endif

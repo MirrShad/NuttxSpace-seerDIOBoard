@@ -525,6 +525,7 @@ int CMileage::initializeParam(uint8_t* pbData, uint16_t len)
 			}
 			m_inverse = 1;
 		}
+		m_param_inited = true;
 	}
 	return 0;
 }

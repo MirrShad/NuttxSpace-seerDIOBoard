@@ -23,8 +23,10 @@ public:
 	int setStart();
 	void waitStart();
 	void newSpeedCmd();
+	void queryOdoCmd();
 	int waitCmd();
 	void sendSpeedCmd();
+	void sendQueryCmd();
 	int doInit();
 private:
 	int can1_fd;

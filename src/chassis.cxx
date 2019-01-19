@@ -24,6 +24,9 @@ CChassisDevice::CChassisDevice()
 
 int CChassisDevice::doInit()
 {
+	while(!Mileage::Instance()->isInited())
+		sleep(1);
+
 	can1_fd = open("/dev/can1", O_WRONLY);
     if (can1_fd < 0)
     {
@@ -169,8 +172,14 @@ int CChassisDevice::waitCmd()
 		printf("Error: chassis waitCmd can not get semophore value\r\n");
 	}
 	status = sem_wait(&cmdSem);
-	if(status!=0){
-		printf("Error: chassis waitCmd can not wait semophore value\r\n");
+	if(status!=0)
+	{
+		if(errno==EINTR && bOdoCmd);
+		else
+		{
+			printf("Error: chassis waitCmd can not wait semophore value errno %d\r\n",errno);
+			return -1;
+		}
 	}
 	if(bNewSpeedCmd)
 	{
@@ -193,12 +202,12 @@ void CChassisDevice::newSpeedCmd()
 	int value;
 	int status = sem_getvalue(&cmdSem, &value);
 	if(status<0){
-		printf("Error: chassis setStart can not get semophore value\r\n");
+		printf("Error: chassis new speed cmd can not get semophore value\r\n");
 	}
 	bNewSpeedCmd = true;
 	status = sem_post(&cmdSem);
 	if(status!=0){
-		printf("Error: chassis setStart can not post semophore value\r\n");
+		printf("Error: chassis new speed cmd can not post semophore value\r\n");
 	}
 }
 
@@ -217,6 +226,24 @@ void CChassisDevice::sendSpeedCmd()
 		FAR struct can_msg_s TxMessage;
 		_driverProtocol->encode(i, DRV_CMD_TARGET_SPEED, Mileage::Instance()->getVel(i), TxMessage);
 		//printf("send speed down\r\n");
+		//write(can1_fd, &TxMessage, 1);
+	}
+}
+
+void CChassisDevice::sendQueryCmd()
+{
+	int i;
+	for(i = 0; i < Mileage::Instance()->num_of_wheel(); i++)
+	{
+		FAR struct can_msg_s TxMessage;
+		_driverProtocol->encode(i, DRV_CMD_ACTURAL_POS, Mileage::Instance()->getVel(i), TxMessage);
+		//printf("send speed down\r\n");
 		write(can1_fd, &TxMessage, 1);
 	}
 }
+
+void CChassisDevice::queryOdoCmd()
+{
+	bOdoCmd = true;
+}
+
