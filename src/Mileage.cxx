@@ -6,6 +6,8 @@
 #include "message_chassisconfig.pb.h"
 #include "ProtocolCanDriver.h"
 #include "chassis.h"
+#include "Utils.h"
+#include <math.h>
 
 #define PI 3.1415926
 
@@ -34,7 +36,7 @@ void CMileage::reset()
 	//m_steerangle = 0.0f;
 	firstIn = true;
 }
-/*
+
 int CMileage::doCalc(const iWheelPos& p)
 {
 	// 1.get current wheel positions : raw single counts
@@ -55,7 +57,7 @@ int CMileage::doCalc(const iWheelPos& p)
 		//give up encoder data with large noise.
 		if(Utils::Fabs(p.at(i) - static_p.at(i)) > ENCODER_MAX_DIFF)
 		{
-			Message::Instance()->postMsg("encoder %d value jumps too large : %d !!!", i, p.at(i));
+			printf("encoder %d value jumps too large : %d !!!", i, p.at(i));
 			for(int j = 0; j <num_of_wheel; j++)
 				static_p.at(j) = p.at(j);
 			return 2;
@@ -68,21 +70,21 @@ int CMileage::doCalc(const iWheelPos& p)
 			wheelPos.at(i), p.at(i), static_p.at(i));
 		#endif
 
-		if(fabs(wheelPos.at(i)) > critical_delta)
+		/*if(fabs(wheelPos.at(i)) > critical_delta)
 		{
 			is_wheel_rotate = true;
 			m_stopped = 0;
 			stopCycle = 0;
-		}
+		}*/
 	}
-
+/*
 	if(false == is_wheel_rotate)
 	{
 		stopCycle = (stopCycle >= STOP_CYCLE_LIMIT) ? STOP_CYCLE_LIMIT : (stopCycle + 1);
 		if (stopCycle >= STOP_CYCLE_LIMIT)
 			m_stopped = 1;
 	}
-
+*/
 	// 2.do forward kinematics transformation
 	PlanarPos planarPos;
 	forwardKinematicsTrans(wheelPos, planarPos);
@@ -109,19 +111,19 @@ int CMileage::doCalc(const iWheelPos& p)
 	//std::cout<<m_x<<" "<<m_angle*180/PI<<std::endl;
 	return 0;
 }
-
+/*
 void CMileage::getData(float& x, float& y, float& angle)
 {
 	x = m_x;					// m -> m
 	y = m_y;					// m -> m
 	angle = m_angle;			// rad -> rad
 }
-
+*/
 void CMileage::forwardKinematicsTrans(const WheelPos& wheelPos, PlanarPos& planarPos)
 {
 	if(DOUBLE_DIFF == Mileage::Instance()->chassisType())
 		forwardKinematicsTransDiff(wheelPos, planarPos);
-
+/*
 	else if(TRICYCLE == Mileage::Instance()->chassisType())
 	{
 		forwardKinematicsTransTricycle(wheelPos, planarPos);
@@ -135,9 +137,9 @@ void CMileage::forwardKinematicsTrans(const WheelPos& wheelPos, PlanarPos& plana
 	else
 	{
 		seer_assert(false);
-	}
+	}*/
 }
-*/
+
 /// Inverse Kinematics
 void CMileage::inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& wheelVel) {
 
@@ -179,7 +181,7 @@ void CMileage::inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& whee
 
 }
 
-/*
+
 /// Forward Kinematics - Diff
 void CMileage::forwardKinematicsTransDiff(const WheelPos& wheelPos, PlanarPos& planarPos)
 {
@@ -192,7 +194,7 @@ void CMileage::forwardKinematicsTransDiff(const WheelPos& wheelPos, PlanarPos& p
 
 	return ;
 }
-*/
+
 /// Inverse Kinematics - Diff
 void CMileage::inverseKinematicsTransDiff(const PlanarVel& planarVel, WheelVel& wheelVel)
 {
@@ -529,7 +531,7 @@ int CMileage::initializeParam(uint8_t* pbData, uint16_t len)
 	}
 	return 0;
 }
-/*
+
 void CMileage::getPositions(iWheelPos& p_wheelpos)
 {
 	if(2 == num_of_wheel())
@@ -552,7 +554,7 @@ void CMileage::getPositions(iWheelPos& p_wheelpos)
 	}
 
 }
-*/
+
 void CMileage::setVelocities(const WheelVel& v_wheelvel)
 {
 	WheelVel temp_wheelvel;

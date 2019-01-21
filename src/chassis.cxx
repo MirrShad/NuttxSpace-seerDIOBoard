@@ -178,24 +178,43 @@ int CChassisDevice::waitQueryRet()
 			if(status == 0)
 			{
 				//printf("get Msg ID:0x%x Data:0x%x 0x%x 0x%x 0x%x\r\n",RxMessage.cm_hdr.ch_id,RxMessage.cm_data[0],RxMessage.cm_data[1],RxMessage.cm_data[2],RxMessage.cm_data[3]);
-				_driverProtocol->decode(_retTyp[i], _retVal[i], RxMessage);
-				if(_retTyp[i] == DRV_CMD_ACTURAL_POS)
+				int temp = 0;
+				if(RxMessage.cm_hdr.ch_id == 0x581)
+					temp = 0;
+				else if(RxMessage.cm_hdr.ch_id == 0x582)
+					temp = 1;
+				_driverProtocol->decode(_retTyp[temp], _retVal[temp], RxMessage);
+				if(_retTyp[temp] == DRV_CMD_ACTURAL_POS)
 				{
-					printf("get query odo response\r\n");
 					break;
 				}
 
 			}
 			else if(status==EINTR && bNewSpeedCmd)
-				printf("interrupt by an speed cmd ignore it\r\n");
+				;//printf("interrupt by an speed cmd ignore it\r\n");
 			else
 			{
 				printf("Error: chassis wait QueryRet get errno %d\r\n",-1*status);
 				return -1;
 			}
 		}while(true);
-		
 	}
+	//printf("get full query odo response\r\n");
+}
+
+void CChassisDevice::report()
+{
+	for(int i = 0; i < Mileage::Instance()->num_of_wheel(); i++)
+	{
+		Mileage::Instance()->setPos(i, getRetVal(i));
+	}
+	CMileage::iWheelPos TempWheelPos;		
+	Mileage::Instance()->getPositions(TempWheelPos);
+	if (0 == Mileage::Instance()->doCalc(TempWheelPos))
+	{	
+		printf("chassis odo report\r\n");
+		//Mileage::Instance()->report();
+	}	
 }
 
 int CChassisDevice::waitCmd()

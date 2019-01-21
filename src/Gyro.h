@@ -8,6 +8,7 @@
 #include <pthread.h>
 
 #include "Singleton.h"
+#include "Reporter.h"
 
 //uart reicer flag
 #define b_uart_head  0x80  //收到A5 头 标志位
@@ -16,7 +17,7 @@
 #define RX_BUFFER_SIZE 50 //接收缓冲区字节数
 
 
-class CGyroDevice
+class CGyroDevice: public CReporter_base
 {
 public:
 	int doInit();

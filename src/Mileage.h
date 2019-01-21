@@ -118,7 +118,7 @@ public:
 	virtual ~CMileage(){}	
 		
  	int doInit();
-	//int doCalc(const iWheelPos& wheelpos);
+	int doCalc(const iWheelPos& wheelpos);
 	//int updateGlobalOdo(WheelPos delta_pos);
 		
 	//void initialzeParam(float e, float r, int32_t encoderLines, float reductionRatio, int32_t motorMaxSpeedRpm, int32_t inverse);
@@ -134,7 +134,7 @@ public:
 	float globalSteerAngle() { return m_steerangle; } 
 
 	/// Forward Kinematics
-	//void forwardKinematicsTrans(const WheelPos& wheelPos, PlanarPos& planarPos);
+	void forwardKinematicsTrans(const WheelPos& wheelPos, PlanarPos& planarPos);
 
 	/// Inverse Kinematics
 	void inverseKinematicsTrans(const PlanarVel& planarVel, WheelVel& wheelVel);
@@ -162,7 +162,7 @@ public:
 	//void setSteerVel(int16_t rawVel);
 	
 public:
-	//void getPositions(iWheelPos& p_wheelpos);
+	void getPositions(iWheelPos& p_wheelpos);
 	void setPos(uint8_t idx, int32_t pos)
 	{m_pos.at(idx) = pos;}
 	
@@ -187,10 +187,10 @@ public:
 	bool isInited(){return m_param_inited;}
 
 private:
-/*
+
 	/// Forward Kinematics - Diff
 	void forwardKinematicsTransDiff(const WheelPos& wheelPos, PlanarPos& planarPos);
-*/
+
 	/// Inverse Kinematics - Diff
 	void inverseKinematicsTransDiff(const PlanarVel& planarVel, WheelVel& wheelVel);
 /*

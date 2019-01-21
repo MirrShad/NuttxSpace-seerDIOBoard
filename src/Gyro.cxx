@@ -8,6 +8,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "Utils.h"
+#include <pb_encode.h>
+#include "message_imu.pb.h"
+#include "Communication.h"
 
 namespace{
 	// version head
@@ -553,11 +557,46 @@ void CGyroDevice::rstTxPowerOn()
 
 void CGyroDevice::report()
 {
+	uint32_t msgEnum = CReportData::EGyro;
+	memcpy(CReporter_base::transBuff_, &msgEnum, sizeof(uint32_t));
+
 	rbk_protocol_Message_IMU pbMsg = rbk_protocol_Message_IMU_init_zero;
 	
-	pbMsg.acc_x = -9.8f*ax/16384.0f;
-	pbMsg.acc_y = 9.8f*ay/16384.0f;
-	pbMsg.acc_z = 9.8f*az/16384.0f;
-	//printf("gyro get Message 2: %d,%d,%d\r\n",ax,ay,az);
+	pb_ostream_t stream = pb_ostream_from_buffer(
+		CReporter_base::transBuff_ + sizeof(uint32_t),
+		CReporter_base::TRANS_BUFF_LEN - sizeof(uint32_t));
+
+	pbMsg.yaw = Utils::Normalize(Utils::Deg2Rad(yaw/* - baseYaw*/));
+	pbMsg.pitch = Utils::Normalize(Utils::Deg2Rad(pitch));
+	pbMsg.roll = Utils::Normalize(Utils::Deg2Rad(roll));
+
+	//gyro is right hand coordinate
+	pbMsg.acc_x = -9.8*ax/16384; //multiply -1
+	pbMsg.acc_y = 9.8*ay/16384;
+	pbMsg.acc_z = 9.8*az/16384;
+
+	pbMsg.rot_x = gx;
+	pbMsg.rot_y = gy;
+	pbMsg.rot_z = gz;
+		
+		
+	//Console::Instance()->printf("gyro get Message: %f,%f,%f,%f,%f,%f,%f,%f,%f\r\n", pbMsg.yaw,pbMsg.pitch,pbMsg.roll
+		//,pbMsg.acc_x,pbMsg.acc_y,pbMsg.acc_z,pbMsg.rot_x,pbMsg.rot_y,pbMsg.rot_z);
+				
+//	RobotPosEKF::Instance()->setNewImuData(pbMsg);
+	pbMsg.rot_off_x = off_gx_;
+	pbMsg.rot_off_y = off_gy_;
+	pbMsg.rot_off_z = off_gz_;
+
+	bool status;
+	status = pb_encode(&stream, rbk_protocol_Message_IMU_fields, &pbMsg);
+	uint16_t pbMsgLen = stream.bytes_written;
+	if (!status)
+	{
+			printf("Gyro Encoding failed: %s\n", PB_GET_ERROR(&stream));
+	}
+
+	uploadRbk(pbMsgLen + sizeof(uint32_t));
+	return ;
 }
 

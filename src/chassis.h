@@ -29,6 +29,8 @@ public:
 	void sendQueryCmd();
 	int waitQueryRet();
 	int doInit();
+	void report();
+	const int32_t& getRetVal(int num) {return _retVal[num];}
 private:
 	int can1_fd;
 	uint8_t _protocol;

@@ -104,6 +104,7 @@ extern "C"
         //printf("query odo cmd\r\n");
         ChassisDevice::Instance()->sendQueryCmd();//send query cmd
         ChassisDevice::Instance()->waitQueryRet();
+        ChassisDevice::Instance()->report();
         //report();
       }
       /*else if(3 == tempCmd)
