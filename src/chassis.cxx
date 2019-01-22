@@ -101,7 +101,7 @@ bool CChassisDevice::setProtocol(const uint8_t proto_type)
 		//_driverProtocol = new CProtocolKeya;
 	}else if (CDriverCanProtocol::Protocol_CanOpenPosition == proto_type)
 	{
-		//_driverProtocol = new CProtocolCopleyCAN(CProtocolCopleyCAN::POSITION_MODE);
+		_driverProtocol = new CProtocolCopleyCAN(CProtocolCopleyCAN::POSITION_MODE);
 	}
 	else if (CDriverCanProtocol::Protocol_HLS == proto_type)
 	{
@@ -164,7 +164,7 @@ void CChassisDevice::waitStart()
 	return;
 }
 
-int CChassisDevice::waitQueryRet()
+int CChassisDevice::waitCmdRet(motorDriverCmdType cmdType)
 {
 	FAR struct can_msg_s RxMessage;
 	int status;
@@ -184,7 +184,7 @@ int CChassisDevice::waitQueryRet()
 				else if(RxMessage.cm_hdr.ch_id == 0x582)
 					temp = 1;
 				_driverProtocol->decode(_retTyp[temp], _retVal[temp], RxMessage);
-				if(_retTyp[temp] == DRV_CMD_ACTURAL_POS)
+				if(_retTyp[temp] == cmdType)
 				{
 					break;
 				}
@@ -279,7 +279,7 @@ void CChassisDevice::sendSpeedCmd()
 		FAR struct can_msg_s TxMessage;
 		_driverProtocol->encode(i, DRV_CMD_TARGET_SPEED, Mileage::Instance()->getVel(i), TxMessage);
 		//printf("send speed down\r\n");
-		//write(can1_fd, &TxMessage, 1);
+		write(can1_fd, &TxMessage, 1);
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "Singleton.h"
 #include <stdint.h>
 #include <string.h>
+#include "Reporter.h"
 
 #define helf_PI	1.570796f
 
@@ -35,7 +36,7 @@ struct PlanarPos {
 	float steer_angle;
 };
 class CConfigTask;
-class CMileage
+class CMileage: public CReporter_base
 {
 	friend class CConfigTask;
 public:
@@ -183,7 +184,7 @@ public:
 
 	void setVelocities(const WheelVel& v_wheelvel);
 	int32_t getVel(uint8_t idx){return m_vel.at(idx);}
-	//virtual int report(void* arg = NULL);
+	virtual int report(void* arg = NULL);
 	bool isInited(){return m_param_inited;}
 
 private:

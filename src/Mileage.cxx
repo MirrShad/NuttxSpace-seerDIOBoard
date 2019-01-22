@@ -8,6 +8,7 @@
 #include "chassis.h"
 #include "Utils.h"
 #include <math.h>
+#include "message_odometer.pb.h"
 
 #define PI 3.1415926
 
@@ -609,9 +610,10 @@ uint8_t CMileage::num_of_wheel()
 	else
 		return 0;
 }
-/*
+
 int CMileage::report(void* arg)
 {
+	reportLock();
 	static uint64_t prev_time = 1;
 
 	uint32_t msgEnum = CReportData::EOdometer;
@@ -635,81 +637,22 @@ int CMileage::report(void* arg)
 	pbMsg.angle = m_angle;
 	
 	pbMsg.steer_angle = m_steerangle;
-	pbMsg.header.data_nsec = timestamp_nsec_ + SntpSynchr::Instance()->getNtpBaseOffset_ns();
+	//pbMsg.header.data_nsec = timestamp_nsec_ + SntpSynchr::Instance()->getNtpBaseOffset_ns();
 	pbMsg.is_stop = m_stopped;
-	pbMsg.spin_angle = LiftRotationDevice::Instance()->getCurrentRad();
+	pbMsg.spin_angle = 0;//LiftRotationDevice::Instance()->getCurrentRad();
 	uint64_t deltatime = timestamp_nsec_ - prev_time;
-	
-
-#if 0
-	static bool err_flag = false;
-	int64_t diff_timestamp = timestamp_ms - timestamp_nsec_ / 1000000;
-	if (m_chassisType != SINGLE_STEER_PREC)
-	{
-		if (deltatime < 5000000)
-		{
-			Message::Instance()->postMsg("attention deltatime, prev is: %lld, now is: %lld.", prev_time, timestamp_nsec_);
-			err_flag = true;
-		} else {
-			err_flag = false;
-		}
-		
-		if (diff_timestamp > 2 || diff_timestamp < -2)
-		{
-			Message::Instance()->postMsg( "ms is %lld , ns is %lld.", timestamp_ms, timestamp_nsec_);
-			err_flag = true;
-		} else {
-			err_flag = false;
-		}
-	}
-#endif
-
-	if (deltatime > 0) 
-	{
-		if (SINGLE_STEER_PREC == m_chassisType) 
-			pbMsg.vel_x = m_steer_vel;
-		else 
-			pbMsg.vel_x = m_delta_x / (deltatime / 1000000000.0f);
-		pbMsg.vel_y = m_delta_y / (deltatime / 1000000000.0f);
-		car_rotate = m_delta_angle / (deltatime / 1000000000.0f);
-		pbMsg.vel_rotate = car_rotate;
-	} else
-	{
-		Message::Instance()->postMsg("odometer deltaT = 0");
-	}
-	
-#if 0
-	if (m_chassisType != SINGLE_STEER_PREC)
-	{
-		if (err_flag)
-		{
-			Message::Instance()->postMsg("vel_x = %f, vel_y = %f, vel_rotate = %f, \
-				deltatimestamp = %llu, timestamp_nsec_ = %llu, timestamp_ms = %llu", \
-				pbMsg.vel_x, pbMsg.vel_y, pbMsg.vel_rotate, deltatime, timestamp_nsec_, \
-				timestamp_ms);
-			
-			iWheelPos TempWheelPos;
-			getPositions(TempWheelPos);
-			for(int i = 0; i < num_of_wheel(); i++)
-			{
-				Message::Instance()->postMsg("encoder %d value: %d !!!", i, TempWheelPos.at(i));
-			} 
-		}
-	}
-	
-#endif
 	
 	if (fabs(pbMsg.vel_x) > 3)
 	{
-		Message::Instance()->postMsg("vel_x is too large, vel_x = %f", pbMsg.vel_x);
+		printf("vel_x is too large, vel_x = %f", pbMsg.vel_x);
 	}
 	if (fabs(pbMsg.vel_y) > 3)
 	{
-		Message::Instance()->postMsg("vel_y is too large, vel_y = %f", pbMsg.vel_y);
+		printf("vel_y is too large, vel_y = %f", pbMsg.vel_y);
 	}
 	if (fabs(pbMsg.vel_rotate) > PI) 
 	{
-		Message::Instance()->postMsg("vel_rotate is too large, vel_rotate = %f, m_delta_angle = %f, deltatime = %llu", \
+		printf("vel_rotate is too large, vel_rotate = %f, m_delta_angle = %f, deltatime = %llu", \
 			pbMsg.vel_rotate, m_delta_angle, deltatime);
 	}
 
@@ -720,17 +663,16 @@ int CMileage::report(void* arg)
 	uint16_t pbMsgLen = stream.bytes_written;
 	if (!status)
 	{
-			Console::Instance()->printf("Encoding failed: %s\r\n", PB_GET_ERROR(&stream));
+		printf("Mileage Encoding failed: %s\r\n", PB_GET_ERROR(&stream));
 	}
-	
-	//Console::Instance()->printf("wheel radio = %fm\n", m_reductionRatio);
 
 	uploadRbk(pbMsgLen + sizeof(uint32_t));
+	reportUnlock();
 	prev_time = timestamp_nsec_;
 	return 0;
 
 }
-
+/*
 int CMileage::odoCommandHandler(uint8_t* argv, uint16_t argc)
 {
 	if(sizeof(uint32_t) != argc)

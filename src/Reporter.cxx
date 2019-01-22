@@ -6,7 +6,6 @@
 //#include <assert.h>
 
 namespace{
-	int socket_n = -1;
 	const uint16_t RPT_DESTPORT = 5002;
 	struct sockaddr_in destaddr;
 	struct sockaddr_in localaddr;
@@ -14,7 +13,28 @@ namespace{
 
 uint8_t CReporter_base::transBuff_[CReporter_base::TRANS_BUFF_LEN];
 bool CReporter_base::isInitialized_ = false;
+int CReporter_base::socket_n = -1;
+pthread_mutex_t CReporter_base::reporter_mut;
 
+void CReporter_base::reportLock()
+{
+	if(socket_n < 0)
+	{
+		pthread_mutex_init(&reporter_mut,NULL);
+	}
+	while(pthread_mutex_lock(&reporter_mut)!=0)// && errno== EINTR)
+	{
+		printf("ERROR Reporter pthread_mutex_lock failed err: %d\n",errno);
+	}
+}
+
+void CReporter_base::reportUnlock()
+{
+	if ((pthread_mutex_unlock(&reporter_mut)) != 0)
+    {
+      printf("ERROR Gyro pthread_mutex_unlock failed %d\n",errno);
+    }
+}
 
 int CReporter_base::upload(uint32_t len, uint8_t* ip, uint16_t port)
 {
@@ -35,18 +55,19 @@ int CReporter_base::upload(uint32_t len, uint8_t* ip, uint16_t port)
 		addrlen              = sizeof(struct sockaddr_in);
 		
 	}
-	
+
 	destaddr.sin_family =  AF_INET;
 	destaddr.sin_port = HTONS(port);
-	destaddr.sin_addr.s_addr = HTONL(0xc0a8c005);//192.168.192.5///destaddr.sin_addr.s_addr = byteston(ip);
+	destaddr.sin_addr.s_addr = (in_addr_t)HTONL(0xc0a8c005);//192.168.192.5///destaddr.sin_addr.s_addr = byteston(ip);
 	addrlen = sizeof(struct sockaddr_in);
 	ret = sendto(socket_n, transBuff_, len, 0, (struct sockaddr *)&destaddr, addrlen);
 //	Console::Instance()->printf("rpt\r\n");
 //	ret = sendto(socket_n, transBuff_, len, ip, port);
 	if(ret < 0)
 	{
-		printf("Reporter upload failed\r\n");
+		printf("Reporter upload failed: %d\r\n",errno);
 	}
+
 	return ret;
 }
 

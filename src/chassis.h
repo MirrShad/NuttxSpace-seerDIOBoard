@@ -27,7 +27,7 @@ public:
 	int waitCmd();
 	void sendSpeedCmd();
 	void sendQueryCmd();
-	int waitQueryRet();
+	int waitCmdRet(motorDriverCmdType cmdType);
 	int doInit();
 	void report();
 	const int32_t& getRetVal(int num) {return _retVal[num];}

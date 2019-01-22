@@ -557,6 +557,7 @@ void CGyroDevice::rstTxPowerOn()
 
 void CGyroDevice::report()
 {
+	reportLock();
 	uint32_t msgEnum = CReportData::EGyro;
 	memcpy(CReporter_base::transBuff_, &msgEnum, sizeof(uint32_t));
 
@@ -597,6 +598,7 @@ void CGyroDevice::report()
 	}
 
 	uploadRbk(pbMsgLen + sizeof(uint32_t));
+	reportUnlock();
 	return ;
 }
 

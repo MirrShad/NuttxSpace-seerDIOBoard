@@ -38,7 +38,7 @@
 # CXX test program
 
 ASRCS =
-CSRCS = pb_decode.c pb_encode.c pb_common.c message_imu.pb.c message_navigation.pb.c message_header.pb.c message_chassisconfig.pb.c
+CSRCS = pb_decode.c pb_encode.c pb_common.c message_imu.pb.c message_navigation.pb.c message_header.pb.c message_chassisconfig.pb.c message_odometer.pb.c
 CXXSRCS = 
 MAINSRC = 
 

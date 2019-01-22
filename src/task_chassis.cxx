@@ -98,13 +98,14 @@ extern "C"
       {
         //printf("send speed cmd\r\n");
         ChassisDevice::Instance()->sendSpeedCmd();//send speed cmd
+        ChassisDevice::Instance()->waitCmdRet(DRV_CMD_TARGET_SPEED);
       }
       else if(2 == tempCmd)
       {
         //printf("query odo cmd\r\n");
         ChassisDevice::Instance()->sendQueryCmd();//send query cmd
-        ChassisDevice::Instance()->waitQueryRet();
-        ChassisDevice::Instance()->report();
+        ChassisDevice::Instance()->waitCmdRet(DRV_CMD_ACTURAL_POS);
+        Mileage::Instance()->report();
         //report();
       }
       /*else if(3 == tempCmd)

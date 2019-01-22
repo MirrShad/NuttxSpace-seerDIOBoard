@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "Communication.h"
 #include <string.h>
+#include <pthread.h>
 
 class CReporter_base
 {
@@ -15,6 +16,8 @@ public:
 		BaseTimer::Instance()->getTime_ns(&timestamp_nsec_);
 	}*/
 	
+	void reportLock();
+	void reportUnlock();
 	int upload(uint32_t len, uint8_t* ip, uint16_t port);
 	int uploadRbk(uint32_t len);
 //	int reply(uint32_t len);
@@ -25,6 +28,8 @@ protected:
 
 private: 
 	static bool isInitialized_;
+	static int socket_n;
+	static pthread_mutex_t reporter_mut;
 };
 
 
