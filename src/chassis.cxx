@@ -2,6 +2,7 @@
 #include "message_navigation.pb.h"
 #include <pb_decode.h>
 #include "ProtocolCopleyCAN.h"
+#include "ProtocolJingZhiCanopen.h"
 #include "Mileage.h"
 #include "ChassisCmdType.h"
 #include <nuttx/can/seer_can.h>
@@ -123,7 +124,7 @@ bool CChassisDevice::setProtocol(const uint8_t proto_type)
 		//_driverProtocol = new CProtocolMotecCANOpen();
 	}else if(CDriverCanProtocol::Protocol_JingZhiCanopen == proto_type)
 	{
-		//_driverProtocol = new CProtocolJingZhiCanopen();
+		_driverProtocol = new CProtocolJingZhiCanopen();
 	}else if(CDriverCanProtocol::Protocol_MingZhiCanopen == proto_type)
 	{
 		//_driverProtocol = new CProtocolMingZhiCanopen();

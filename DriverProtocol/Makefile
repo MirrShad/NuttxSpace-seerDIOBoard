@@ -39,7 +39,7 @@
 
 ASRCS =
 CSRCS = 
-CXXSRCS = ProtocolCopleyCAN.cxx
+CXXSRCS = ProtocolCopleyCAN.cxx ProtocolJingZhiCanopen.cxx
 MAINSRC = 
 
 CONFIG_XYZ_PROGNAME ?= cxxtest$(EXEEXT)
