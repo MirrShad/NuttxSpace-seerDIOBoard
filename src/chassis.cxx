@@ -212,8 +212,8 @@ void CChassisDevice::report()
 	Mileage::Instance()->getPositions(TempWheelPos);
 	if (0 == Mileage::Instance()->doCalc(TempWheelPos))
 	{	
-		printf("chassis odo report\r\n");
-		//Mileage::Instance()->report();
+		//printf("chassis odo report\r\n");
+		Mileage::Instance()->report();
 	}	
 }
 

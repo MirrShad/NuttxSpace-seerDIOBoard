@@ -105,7 +105,7 @@ extern "C"
         //printf("query odo cmd\r\n");
         ChassisDevice::Instance()->sendQueryCmd();//send query cmd
         ChassisDevice::Instance()->waitCmdRet(DRV_CMD_ACTURAL_POS);
-        Mileage::Instance()->report();
+        ChassisDevice::Instance()->report();
         //report();
       }
       /*else if(3 == tempCmd)

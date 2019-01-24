@@ -7,13 +7,9 @@
 
 namespace{
 	const uint16_t RPT_DESTPORT = 5002;
-	struct sockaddr_in destaddr;
-	struct sockaddr_in localaddr;
 }
 
 uint8_t CReporter_base::transBuff_[CReporter_base::TRANS_BUFF_LEN];
-bool CReporter_base::isInitialized_ = false;
-int CReporter_base::socket_n = -1;
 pthread_mutex_t CReporter_base::reporter_mut;
 
 void CReporter_base::reportLock()
@@ -42,24 +38,19 @@ int CReporter_base::upload(uint32_t len, uint8_t* ip, uint16_t port)
 	socklen_t addrlen;
 	if(socket_n < 0)
 	{
-		socket_n = socket(AF_INET, SOCK_DGRAM, 0);
-		if (socket_n < 0)
-		{
-			printf("upload failed create client socket failure %d\n", errno);
-			return -1;
-		}
+	  destaddr.sin_family             = AF_INET;
+          destaddr.sin_port               = HTONS(port);
+  	  destaddr.sin_addr.s_addr        = HTONL(0xc0a8c005);//192.168.192.5
 
-		localaddr.sin_family = AF_INET;
-		localaddr.sin_port = HTONS(56789);
-		localaddr.sin_addr.s_addr = HTONL(INADDR_ANY);
-		addrlen              = sizeof(struct sockaddr_in);
-		
+  	  addrlen                       = sizeof(struct sockaddr_in);
+  	  socket_n                        = socket(PF_INET, SOCK_DGRAM, 0);
+  	  if (socket_n < 0)
+    	  {
+      	    fprintf(stderr, "ERROR: socket() failed: %d\n", errno);
+      	    return 1;
+    	  }
 	}
 
-	destaddr.sin_family =  AF_INET;
-	destaddr.sin_port = HTONS(port);
-	destaddr.sin_addr.s_addr = (in_addr_t)HTONL(0xc0a8c005);//192.168.192.5///destaddr.sin_addr.s_addr = byteston(ip);
-	addrlen = sizeof(struct sockaddr_in);
 	ret = sendto(socket_n, transBuff_, len, 0, (struct sockaddr *)&destaddr, addrlen);
 //	Console::Instance()->printf("rpt\r\n");
 //	ret = sendto(socket_n, transBuff_, len, ip, port);
