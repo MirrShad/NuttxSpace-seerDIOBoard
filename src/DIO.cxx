@@ -14,7 +14,7 @@
 void CDIODevice::report()
 {
 	reportLock();
-	uint32_t msgEnum = CReportData::EGyro;
+	uint32_t msgEnum = CReportData::EIntBrd;
 	memcpy(CReporter_base::transBuff_, &msgEnum, sizeof(uint32_t));
 
 	rbk_protocol_Message_Controller pbMsg = rbk_protocol_Message_Controller_init_zero;
@@ -23,9 +23,9 @@ void CDIODevice::report()
 		CReporter_base::transBuff_ + sizeof(uint32_t),
 		CReporter_base::TRANS_BUFF_LEN - sizeof(uint32_t));
 
-	pbMsg.temp = 0;
+	pbMsg.temp = 21;
 	pbMsg.humi = 0;
-	pbMsg.voltage = 0;
+	pbMsg.voltage = 3.3;
 	pbMsg.emc = false;
     pbMsg.driverEmc = false;
     pbMsg.brake = false;
@@ -33,6 +33,7 @@ void CDIODevice::report()
     pbMsg.autoCharge = false;
     pbMsg.electric = false;
 
+		
 	bool status;
 	status = pb_encode(&stream, rbk_protocol_Message_Controller_fields, &pbMsg);
 	uint16_t pbMsgLen = stream.bytes_written;

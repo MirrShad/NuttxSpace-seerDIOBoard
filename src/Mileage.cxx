@@ -9,6 +9,7 @@
 #include "Utils.h"
 #include <math.h>
 #include "message_odometer.pb.h"
+#include <sys/time.h>
 
 #define PI 3.1415926
 
@@ -17,6 +18,9 @@ namespace{
 	const int STOP_CYCLE_LIMIT = 20;
 	float critical_delta = 1.1;
 	const int ENCODER_MAX_DIFF = 2000000;
+	struct timeval xTimeLast;
+    	struct timeval xTimeCur;
+
 }
 int CMileage::doInit()
 {
@@ -71,12 +75,12 @@ int CMileage::doCalc(const iWheelPos& p)
 			wheelPos.at(i), p.at(i), static_p.at(i));
 		#endif
 
-		/*if(fabs(wheelPos.at(i)) > critical_delta)
+		if(Utils::Fabs(wheelPos.at(i)) > critical_delta)
 		{
 			is_wheel_rotate = true;
 			m_stopped = 0;
 			stopCycle = 0;
-		}*/
+		}
 	}
 /*
 	if(false == is_wheel_rotate)
@@ -640,8 +644,26 @@ int CMileage::report(void* arg)
 	//pbMsg.header.data_nsec = timestamp_nsec_ + SntpSynchr::Instance()->getNtpBaseOffset_ns();
 	pbMsg.is_stop = m_stopped;
 	pbMsg.spin_angle = 0;//LiftRotationDevice::Instance()->getCurrentRad();
-	uint64_t deltatime = timestamp_nsec_ - prev_time;
-	
+	uint64_t deltatime = 10000000;//timestamp_nsec_ - prev_time;      	
+	gettimeofday(&xTimeCur, NULL);    
+	if(xTimeLast.tv_usec == 0 && xTimeLast.tv_sec==0);
+	else
+		deltatime = (xTimeCur.tv_sec - xTimeLast.tv_sec) * 1000000000l + \
+        (xTimeCur.tv_usec - xTimeLast.tv_usec) * 1000L;
+	if (deltatime > 0) 
+	{
+		if (SINGLE_STEER_PREC == m_chassisType) 
+			pbMsg.vel_x = m_steer_vel;
+		else 
+			pbMsg.vel_x = m_delta_x / (deltatime / 1000000000.0f);
+		pbMsg.vel_y = m_delta_y / (deltatime / 1000000000.0f);
+		car_rotate = m_delta_angle / (deltatime / 1000000000.0f);
+		pbMsg.vel_rotate = car_rotate;
+	} else
+	{
+		printf("odometer deltaT = 0");
+	}
+
 	if (fabs(pbMsg.vel_x) > 3)
 	{
 		printf("vel_x is too large, vel_x = %f", pbMsg.vel_x);
