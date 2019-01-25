@@ -57,6 +57,7 @@
 #include "task_gyro.h"
 #include "task_config.h"
 #include "task_chassis.h"
+#include "task_DIO.h"
 #include "udp.h"
 using namespace std;
 
@@ -144,6 +145,17 @@ extern "C"
       return EXIT_FAILURE;
     }
     
+    printf("Init DIO task\r\n");
+    ret = task_create("DIO_daemon", CONFIG_DIO_PRIORITY,
+                    2048, task_DIO,
+                    NULL);
+    if (ret < 0)
+    {
+      int errcode = errno;
+      printf("gyro_main: ERROR: Failed to start DIO_daemon: %d\n",
+             errcode);
+      return EXIT_FAILURE;
+    }
 
     return 0;
   }

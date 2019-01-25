@@ -39,7 +39,7 @@
 
 ASRCS =
 CSRCS =
-CXXSRCS = task_heartled.cxx task_commanddispatch.cxx task_gyro.cxx task_config.cxx task_chassis.cxx Gyro.cxx chassis.cxx Mileage.cxx ProtocolCanDriver.cxx Utils.cxx Reporter.cxx
+CXXSRCS = task_heartled.cxx task_commanddispatch.cxx task_gyro.cxx task_config.cxx task_chassis.cxx Gyro.cxx chassis.cxx Mileage.cxx ProtocolCanDriver.cxx Utils.cxx Reporter.cxx DIO.cxx task_DIO.cxx
 MAINSRC = 
 
 CFLAGS   += ${shell $(INCDIR) $(INCDIROPT) "$(CC)" "$(APPDIR)$(DELIM)hal"}

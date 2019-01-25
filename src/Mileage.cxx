@@ -488,7 +488,7 @@ int CMileage::initializeParam(uint8_t* pbData, uint16_t len)
 
 		if (!status)
 		{
-			printf("Mileage Decoding failed: n");
+			printf("Mileage Decoding failed: \n");
 			return -1;
 		}
 
