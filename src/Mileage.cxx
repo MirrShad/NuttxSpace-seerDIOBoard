@@ -10,6 +10,7 @@
 #include <math.h>
 #include "message_odometer.pb.h"
 #include <sys/time.h>
+#include "sntpSynchr.h"
 
 #define PI 3.1415926
 
@@ -641,7 +642,11 @@ int CMileage::report(void* arg)
 	pbMsg.angle = m_angle;
 	
 	pbMsg.steer_angle = m_steerangle;
-	//pbMsg.header.data_nsec = timestamp_nsec_ + SntpSynchr::Instance()->getNtpBaseOffset_ns();
+	struct timeval currentTime;
+	gettimeofday(&currentTime, NULL);
+	timestamp_nsec_ = (currentTime.tv_sec - currentTime.tv_sec) * 1000000000L + \
+        (currentTime.tv_usec - currentTime.tv_usec) * 1000L;
+	pbMsg.header.data_nsec = timestamp_nsec_ + SntpSynchr::Instance()->getNtpBaseOffset_ns();
 	pbMsg.is_stop = m_stopped;
 	pbMsg.spin_angle = 0;//LiftRotationDevice::Instance()->getCurrentRad();
 	uint64_t deltatime = 10000000;//timestamp_nsec_ - prev_time;      	

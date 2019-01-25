@@ -20,6 +20,7 @@
 #include "chassis.h"
 #include "message_chassisconfig.pb.h"
 #include "Mileage.h"
+#include "sntpSynchr.h"
 typedef struct
 {
 	uint32_t ECommand;
@@ -44,6 +45,7 @@ namespace{
 	CCallbackHandler<void> nullConfigCmdHandler(nullConfigCallback);
 	CCallbackHandler<void> configChassisTypeHandler(configChassisTypeFunc);
 	CCallbackHandler<CMileage> initMileageParamCommandHandler(Mileage::Instance(), &CMileage::initializeParam);
+	CCallbackHandler<CSntpSynchr> timeSyncQueryHandler(SntpSynchr::Instance(), &CSntpSynchr::ntpQueryHandler);
 
   Handler_t CommandHandlerTab[MAX_HANDLER_NUM] =
 	{
@@ -52,7 +54,7 @@ namespace{
 
 		{0x00009999, NULL},
 		{0x0000100F, NULL},	//EPrintDebugInfo
-		{0x00001013, NULL},//{0x00001013, &timeSyncQueryHandler},
+		{0x00001013, &timeSyncQueryHandler},
 		{0x00001014, NULL},
 		{0x00001015, NULL},
 		{0x00001016, NULL},
@@ -227,7 +229,14 @@ extern "C"
 			retBuff[0] = 0;
 		}else
 		{
-			printf("Cannot find Handler 0x%x",int_ct);
+			if(123 == destport)
+			{
+				SntpSynchr::Instance()->ntpCalcHandler(inbuf + sizeof(uint32_t), (uint16_t)(nbytes - sizeof(int_ct)));
+			}
+			else
+			{
+				printf("Cannot find Handler 0x%x",int_ct);
+			}
 		}
 
 			if(int_ct > 0xA000 || !findHandler)
